@@ -6,6 +6,10 @@ html,
 body {
   scroll-behavior: smooth;
 }
+body {
+  position: relative;
+  overflow-x: hidden;
+}
 ::selection {
   background-color: rgb(248, 212, 122);
   color: #21201f;
