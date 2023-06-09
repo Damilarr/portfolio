@@ -1,0 +1,66 @@
+<nav
+  class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 fixed top-0 py-6 sm:py-12 right-0 left-0 z-30 items-center"
+>
+  <div
+    class="bg-[#262524] z-20 bg-opacity-80 w-5/6 sm:w-auto shadow-xl backdrop-blur-lg jet-font text-base sm:text-lg flex space-x-4 px-3 rounded-2xl sm:rounded-3xl align-middle justify-between sm:justify-around items-center"
+  >
+    <a href="#">
+      <img
+        [src]="currentImgSrc"
+        class="h-[4.3rem] sm:h-20 w-auto"
+        (mouseover)="startChangingImage()"
+        (mouseout)="stopChangingImage()"
+        alt="memoji"
+      />
+    </a>
+    <a
+      href="#works"
+      class="text-whitish hidden sm:block hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      >WORK</a
+    >
+    <a
+      href="#about"
+      class="text-whitish hidden sm:block hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      >INFO</a
+    >
+    <a
+      href="#chat"
+      class="py-2 px-4 hidden sm:block rounded-lg transition-all duration-300 bg-yelloww hover:bg-white"
+      >CHAT</a
+    >
+    <button
+      (click)="showMobileNav()"
+      class="py-[6px] px-4 sm:hidden block outline-0 rounded-lg"
+      [ngClass]="{ 'bg-yelloww': navClosed, 'bg-white': !navClosed }"
+    >
+      MENU
+      <i
+        [ngClass]="{
+          'fa-layer-group fa-fade': navClosed,
+          'fa-xmark': !navClosed
+        }"
+        class="fa-solid"
+      ></i>
+    </button>
+  </div>
+  <div
+    class="bg-[#262524] py-3 w-5/6 -translate-y-7 z-10 shadow-xl backdrop-blur-sm jet-font text-base sm:text-lg sm:hidden hidden px-3 rounded-2xl justify-between items-center transition-all duration-1000"
+    id="mobileNav"
+  >
+    <a
+      href="#works"
+      class="text-whitish hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      >WORK</a
+    >
+    <a
+      href="#about"
+      class="text-whitish hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      >INFO</a
+    >
+    <a
+      href="#chat"
+      class="py-2 px-4 rounded-lg transition-all duration-300 bg-yelloww hover:bg-white"
+      >CHAT</a
+    >
+  </div>
+</nav>

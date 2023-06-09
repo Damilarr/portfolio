@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  scroll-behavior: smooth;
+}
+::selection {
+  background-color: rgb(248, 212, 122);
+  color: #21201f;
+}
+section {
+  background-color: #21201f;
+  border: 1px solid #21201f;
+  outline: 1px solid #21201f;
+}
+@font-face {
+  font-family: gsansr;
+  src: url(./assets/Font/GeneralSans_Complete/GeneralSans_Complete/Fonts/OTF/GeneralSans-Regular.otf);
+}
+@font-face {
+  font-family: gsansm;
+  src: url(./assets/Font/GeneralSans_Complete/GeneralSans_Complete/Fonts/OTF/GeneralSans-Medium.otf);
+}
+.jet-font {
+  font-family: "JetBrains Mono", monospace;
+}
+.gsansm {
+  font-family: gsansm;
+}
+.gsansr {
+  font-family: gsansr;
+}
+.exo {
+  font-family: "Exo 2", sans-serif;
+}
+.header {
+  @apply text-[#b9b8ad] jet-font;
+}
+.techs {
+  @apply md:p-6 p-3 bg-[#21201f] align-middle rounded-md flex justify-center items-center flex-col w-1/4;
+}
+.techs h3 {
+  @apply text-sm sm:text-base;
+}
+.techs img {
+  @apply text-whitish;
+}
+.inputt {
+  @apply block w-full py-3 text-xl px-2 mt-1 bg-[#21201f] placeholder:text-[#3e3c39] text-whitish border-[#b3b2ae88] rounded-md shadow-sm hover:border-yelloww focus:border-yelloww transition-all duration-700 border focus:outline-yelloww;
+}

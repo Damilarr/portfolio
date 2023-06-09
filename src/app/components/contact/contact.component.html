@@ -1,0 +1,54 @@
+<section
+  class="flex z-20 relative rounded-b-[3rem] space-y-4 md:space-y-0 md:flex-row justify-center md:items-start items-center py-10 flex-col"
+>
+  <div class="flex flex-col space-y-2 md:w-1/2 p-6">
+    <h2 class="header text-2xl">LET's TALK</h2>
+    <p class="text-whitish text-xl exo">
+      Reach out to discuss a project, ask a question, get some feedback or to
+      just setup a time to hang out. 👋
+    </p>
+  </div>
+  <div class="w-full md:max-w-full md:w-1/2 mx-auto">
+    <div class="p-6 sm:rounded-md">
+      <form method="POST" action="">
+        <label class="block mb-6">
+          <span class="header">Your name</span>
+          <input
+            type="text"
+            name="name"
+            class="inputt"
+            placeholder="Joe Bloggs"
+          />
+        </label>
+        <label class="block mb-6">
+          <span class="header">Email address</span>
+          <input
+            name="email"
+            type="email"
+            class="inputt"
+            placeholder="joe.bloggs@example.com"
+            required
+          />
+        </label>
+        <label class="block mb-6">
+          <span class="header">Message</span>
+          <textarea
+            name="message"
+            class="inputt"
+            rows="3"
+            placeholder="Tell us what you're thinking about..."
+          ></textarea>
+        </label>
+        <div class="mb-6 items-center justify-between flex">
+          <button
+            type="submit"
+            class="h-10 px-5 text-black bg-yelloww rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-whitish"
+          >
+            SUBMIT
+          </button>
+          <p class="text-whitish">ALL FIELDS ARE REQUIRED</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
