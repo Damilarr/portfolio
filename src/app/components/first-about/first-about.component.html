@@ -22,12 +22,18 @@
     data-aos-anchor-placement="top-bottom"
   >
     <div class="flex-col w-full md:w-fit exo bg-[#21201f] rounded-lg p-10">
-      <button class="block w-full bg-blue-400 px-7 py-2 my-3 rounded-md">
+      <button
+        (click)="downloadResume()"
+        class="block w-full bg-blue-400 px-7 py-2 my-3 rounded-md"
+      >
         <i class="fa-solid fa-download px-2 fa-bounce"></i>Resume
       </button>
-      <button class="block w-full bg-[#f8d47a] px-7 rounded-md py-2">
+      <a
+        href="https://github.com/Damilarr"
+        class="block w-full bg-[#f8d47a] px-7 rounded-md py-2"
+      >
         <i class="fa-brands fa-github" style="color: #000000"></i> GITHUB
-      </button>
+      </a>
     </div>
   </div>
 </section>
