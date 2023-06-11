@@ -10,14 +10,20 @@
   </div>
   <div class="w-full md:max-w-full md:w-1/2 mx-auto">
     <div class="p-6 sm:rounded-md">
-      <form method="POST" action="">
+      <form
+        method="POST"
+        target="_blank"
+        action="https://formsubmit.co/0602ea8cd04997f663159d716de0a739"
+      >
         <label class="block mb-6">
           <span class="header">Your name</span>
           <input
             type="text"
             name="name"
+            formControlName="name"
             class="inputt"
-            placeholder="Joe Bloggs"
+            placeholder="Joe Briggs"
+            required
           />
         </label>
         <label class="block mb-6">
@@ -26,6 +32,7 @@
             name="email"
             type="email"
             class="inputt"
+            formControlName="email"
             placeholder="joe.bloggs@example.com"
             required
           />
@@ -35,8 +42,10 @@
           <textarea
             name="message"
             class="inputt"
+            formControlName="message"
             rows="3"
             placeholder="Tell us what you're thinking about..."
+            required
           ></textarea>
         </label>
         <div class="mb-6 items-center justify-between flex">
@@ -46,7 +55,9 @@
           >
             SUBMIT
           </button>
-          <p class="text-whitish">ALL FIELDS ARE REQUIRED</p>
+          <p class="text-whitish text-base sm:text-lg">
+            ALL FIELDS ARE REQUIRED
+          </p>
         </div>
       </form>
     </div>
