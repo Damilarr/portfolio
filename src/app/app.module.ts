@@ -9,6 +9,7 @@ import { AboutComponent } from './components/about/about.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { FirstAboutComponent } from './components/first-about/first-about.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,12 +20,10 @@ import { FirstAboutComponent } from './components/first-about/first-about.compon
     AboutComponent,
     FooterComponent,
     ContactComponent,
-    FirstAboutComponent
+    FirstAboutComponent,
   ],
-  imports: [
-    BrowserModule
-  ],
+  imports: [BrowserModule, ReactiveFormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
