@@ -13,17 +13,13 @@ const routes: Routes = [
   {
     path: 'upload',
     component: ProjectUploadComponent,
+    canActivate: [AdminGuard],
   },
-  // {
-  //   path: 'upload',
-  //   component: ProjectUploadComponent,
-  //   canActivate: [AdminGuard],
-  // },
 ];
 
 @NgModule({
   declarations: [],
-  imports: [RouterModule.forRoot(routes), CommonModule],
+  imports: [RouterModule.forRoot(routes, { useHash: false }), CommonModule],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
