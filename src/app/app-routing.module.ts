@@ -13,12 +13,8 @@ const routes: Routes = [
   {
     path: 'upload',
     component: ProjectUploadComponent,
+    canActivate: [AdminGuard],
   },
-  // {
-  //   path: 'upload',
-  //   component: ProjectUploadComponent,
-  //   canActivate: [AdminGuard],
-  // },
 ];
 
 @NgModule({
