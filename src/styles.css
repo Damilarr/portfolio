@@ -21,6 +21,10 @@ section {
   border: 1px solid #21201f;
   outline: 1px solid #21201f;
 }
+button,
+a {
+  cursor: pointer;
+}
 @font-face {
   font-family: gsansr;
   src: url(./assets/Font/GeneralSans_Complete/GeneralSans_Complete/Fonts/OTF/GeneralSans-Regular.otf);

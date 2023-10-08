@@ -1,4 +1,6 @@
+import { ViewportScroller } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -9,7 +11,10 @@ export class NavbarComponent implements OnInit {
   currentImgSrc: string;
   imageTimer: any;
   navClosed: boolean = true;
-  constructor() {
+  constructor(
+    private router: Router,
+    private viewportScroller: ViewportScroller
+  ) {
     this.currentImgSrc = '../../../assets/Memoji/Memoji1.png';
   }
   startChangingImage() {
@@ -44,6 +49,15 @@ export class NavbarComponent implements OnInit {
       document.getElementById('mobileNav')?.classList.replace('flex', 'hidden');
       document.getElementById('mobileNav')?.classList.add('-translate-y-7');
     }
+  }
+  scrollToWorks() {
+    this.viewportScroller.scrollToAnchor('works');
+  }
+  scrollToContact() {
+    this.viewportScroller.scrollToAnchor('chat');
+  }
+  scrollToAbout() {
+    this.viewportScroller.scrollToAnchor('about');
   }
 
   ngOnInit(): void {}
