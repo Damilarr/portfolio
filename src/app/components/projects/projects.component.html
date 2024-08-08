@@ -1,5 +1,5 @@
 <section
-  class="flex-col relative z-20 flex h-fit justify-around py-16 px-2 lg:px-10 space-y-5"
+  class="flex-col relative z-20 flex h-fit justify-around py-16 px-2 lg:px-16 space-y-5"
 >
   <div class="w-1/2 flex-col space-y-1 pl-10 pb-6">
     <h3 class="header">FEATURED WORK</h3>
@@ -8,47 +8,57 @@
     class="flex flex-col md:flex-row items-center justify-center"
     data-aos="fade-up"
   >
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center"
+    >
       <div
-        class="border border-gray-800 shadow-lg transition-shadow shadow-black rounded-md overflow-hidden"
         *ngFor="let project of data"
+        class="max-w-sm border border-opacity-5 border-gray-50 group relative transition-all duration-1000 h-fit rounded-lg shadow bg-[#21201f]"
       >
-        <img
-          src="{{ project.img }}"
-          alt="portfolio"
-          class="w-full h-36 md:h-48 object-cover cursor-pointer"
-        />
-        <div class="w-full p-4 text-whitish">
-          <a
-            href="#"
-            class="text-lg uppercase md:text-xl mb-2 md:mb-3 font-semibold header"
-          >
-            {{ project.projectName }}
-          </a>
-          <h3 class="text-sm md:text-base mb-2 md:mb-3 exo">
-            {{ project.projectDesc }}
-          </h3>
-          <p
-            class="flex flex-wrap gap-2 py-1 flex-row items-center justify-start text-xs md:text-sm"
-          >
-            <span
-              *ngFor="let item of project.techs"
-              class="inline-block header shadow-lg px-2 py-1 font-semibold border border-gray-600 rounded-l-full rounded-r-full capitalize"
+        <div class="bg-[#21201f] rounded-lg">
+          <img
+            class="rounded-t-lg group-hover:animate-pulse"
+            src="{{ project.img }}"
+            alt="{{ project.projectName }}"
+          />
+          <div class="p-5">
+            <a href="#">
+              <h5
+                class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+              >
+                {{ project.projectName }}
+              </h5>
+            </a>
+            <p
+              class="flex flex-wrap gap-2 py-1 flex-row items-center justify-start text-[10px] md:text-sm"
             >
-              {{ item }}
-            </span>
-          </p>
-          <hr class="my-2 text-yelloww" />
-          <div class="flex justify-between px-2">
-            <a
-              href="{{ project.githubLink }}"
-              class="shadow-xl"
-              title="View on Github"
-              ><i class="fa-brands fa-github"></i
-            ></a>
-            <a href="{{ project.projectLink }}" title="view deployment"
-              ><i class="fa-solid fa-arrow-up-right-from-square"></i
-            ></a>
+              <span
+                *ngFor="let item of project.techs"
+                class="inline-block header shadow-lg px-2 py-[2px] font-semibold border border-gray-600 rounded-l-full rounded-r-full capitalize"
+              >
+                {{ item }}
+              </span>
+            </p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              {{ project.projectDesc }}
+            </p>
+
+            <div class="flex flex-col justify-between space-y-2">
+              <a
+                href="{{ project.projectLink }}"
+                target="_blank"
+                class="shadow-xl py-2 px-4 w-fit rounded-lg bg-[#F8D47A] text-black font-semibold"
+                title="View on Github"
+                >Live Website <i class="fa-solid fa-arrow-trend-up"></i
+              ></a>
+              <a
+                class="shadow-xl py-2 px-4 w-fit rounded-lg bg-black border font-semibold border-opacity-20 border-whitish text-white"
+                href="{{ project.githubLink }}"
+                title="view deployment"
+                >View on Github
+                <i class="fa-brands fa-github" style="color: #fff"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
