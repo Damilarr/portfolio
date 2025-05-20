@@ -22,6 +22,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { AngularFireModule } from '@angular/fire/compat';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { AngularFireModule } from '@angular/fire/compat';
     AppRoutingModule,
     RouterModule,
     FormsModule,
+    HttpClientModule,
     provideStorage(() => getStorage()),
   ],
   providers: [{ provide: FIREBASE_OPTIONS, useValue: environment.firebase }],

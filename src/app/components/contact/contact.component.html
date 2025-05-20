@@ -10,11 +10,7 @@
   </div>
   <div class="w-full md:max-w-full md:w-1/2 mx-auto">
     <div class="p-6 sm:rounded-md">
-      <form
-        method="POST"
-        target="_blank"
-        action="https://formsubmit.co/0602ea8cd04997f663159d716de0a739"
-      >
+      <form [formGroup]="contactInfo" (ngSubmit)="onSubmit()">
         <label class="block mb-6">
           <span class="header">Your name</span>
           <input
@@ -48,12 +44,19 @@
             required
           ></textarea>
         </label>
+        <div *ngIf="submitted" class="text-green-500 mb-4">
+          Message sent successfully!
+        </div>
+        <div *ngIf="error" class="text-red-500 mb-4">
+          Error sending message. Please try again.
+        </div>
         <div class="mb-6 items-center justify-between flex">
           <button
             type="submit"
+            [disabled]="submitting"
             class="h-10 px-5 text-black bg-yelloww rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-whitish"
           >
-            SUBMIT
+            {{ submitting ? "SENDING..." : "SUBMIT" }}
           </button>
           <p class="text-whitish text-base sm:text-lg">
             ALL FIELDS ARE REQUIRED
