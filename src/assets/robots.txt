@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://damilarr.vercel.app/sitemap.xml
+Sitemap: https://damilarr.dev/sitemap.xml
 
