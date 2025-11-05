@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Screen reader only - for SEO and accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 html,
 body {
   scroll-behavior: smooth;
@@ -33,6 +46,14 @@ a {
   font-family: gsansm;
   src: url(./assets/Font/GeneralSans_Complete/GeneralSans_Complete/Fonts/OTF/GeneralSans-Medium.otf);
 }
+@font-face {
+  font-family: "Blanka Regular";
+  src: url(./assets/Font/GeneralSans_Complete/GeneralSans_Complete/Fonts/OTF/Blanka-Regular.otf)
+    format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 .jet-font {
   font-family: "JetBrains Mono", monospace;
 }
@@ -45,11 +66,14 @@ a {
 .exo {
   font-family: "Exo 2", sans-serif;
 }
+.blanka {
+  font-family: "Blanka Regular", sans-serif;
+}
 .header {
   @apply text-[#b9b8ad] jet-font;
 }
 .techs {
-  @apply md:p-6 p-3 bg-[#21201f] align-middle rounded-md flex justify-center items-center flex-col w-1/4;
+  @apply md:p-6 p-3 align-middle rounded-md flex justify-center items-center flex-col w-1/4;
 }
 .techs h3 {
   @apply text-sm sm:text-base;
@@ -58,5 +82,11 @@ a {
   @apply text-whitish;
 }
 .inputt {
-  @apply block w-full py-3 text-xl px-2 mt-1 bg-[#21201f] placeholder:text-[#3e3c39] text-whitish border-[#b3b2ae88] rounded-md shadow-sm hover:border-yelloww focus:border-yelloww transition-all duration-700 border focus:outline-yelloww;
+  @apply block w-full py-3 text-xl px-2 mt-1 bg-[#21201f] placeholder:text-[#3e3c39] text-whitish border-[#b3b2ae88] rounded-md shadow-sm hover:border-yelloww focus:border-yelloww transition-all duration-700 border;
+  outline: none !important;
+}
+
+.inputt:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

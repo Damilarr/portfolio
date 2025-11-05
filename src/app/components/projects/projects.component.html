@@ -1,9 +1,36 @@
 <section
-  class="flex-col relative z-20 flex h-fit justify-around py-16 px-2 lg:px-16 space-y-5"
+  class="flex-col relative z-20 flex h-fit justify-around py-16 px-4 sm:px-6 md:px-10 lg:px-16 space-y-5"
 >
-  <div class="w-1/2 flex-col space-y-1 pl-10 pb-6">
-    <h3 class="header">FEATURED WORK</h3>
+  <div class="w-1/2 flex-col space-y-1 pb-6">
+    <h3
+      class="header mb-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+    >
+      FEATURED WORK
+    </h3>
   </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-4 mb-8">
+    <button
+      (click)="setActiveTab('web')"
+      [class.active-tab]="activeTab === 'web'"
+      [class.inactive-tab]="activeTab !== 'web'"
+      class="tab-button"
+    >
+      <i class="fa-solid fa-globe mr-2"></i>
+      WEB
+    </button>
+    <button
+      (click)="setActiveTab('mobile')"
+      [class.active-tab]="activeTab === 'mobile'"
+      [class.inactive-tab]="activeTab !== 'mobile'"
+      class="tab-button"
+    >
+      <i class="fa-solid fa-mobile-screen-button mr-2"></i>
+      MOBILE
+    </button>
+  </div>
+
   <div
     class="flex flex-col md:flex-row items-center justify-center"
     data-aos="fade-up"
@@ -11,57 +38,244 @@
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center"
     >
-      <div
-        *ngFor="let project of data"
-        class="max-w-sm border border-opacity-5 border-gray-50 group relative transition-all duration-1000 h-fit rounded-lg shadow bg-[#21201f]"
-      >
-        <div class="bg-[#21201f] rounded-lg">
-          <img
-            class="rounded-t-lg group-hover:animate-pulse"
-            src="{{ project.img }}"
-            alt="{{ project.projectName }}"
-          />
-          <div class="p-5">
-            <a href="#">
-              <h5
-                class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-              >
+      <ng-container *ngFor="let project of filteredData">
+        <!-- Mobile Project Card -->
+        <div
+          *ngIf="project.category === 'mobile'"
+          class="max-w-sm border border-opacity-5 border-gray-50 group relative transition-all duration-1000 h-fit rounded-lg shadow bg-[#21201f] mobile-project-card"
+        >
+          <div class="bg-[#21201f] rounded-lg w-full p-5">
+            <!-- Phone Mockup -->
+            <div class="phone-mockup mb-6">
+              <div class="phone-screen">
+                <!-- Video Demo (if available) -->
+                <video
+                  *ngIf="project.demoVideo"
+                  [src]="project.demoVideo"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  class="phone-screen"
+                ></video>
+                <!-- Screenshots Carousel (if available) -->
+                <div
+                  *ngIf="
+                    !project.demoVideo &&
+                    project.screenshots &&
+                    project.screenshots.length > 0
+                  "
+                  class="screenshot-carousel"
+                >
+                  <img
+                    [src]="getCurrentScreenshot(project)"
+                    [alt]="project.projectName"
+                    class="phone-screen"
+                  />
+                  <!-- Carousel Controls -->
+                  <div
+                    *ngIf="project.screenshots.length > 1"
+                    class="absolute inset-0 flex items-center justify-between p-2 pointer-events-none"
+                  >
+                    <button
+                      (click)="previousScreenshot(project, $event)"
+                      class="pointer-events-auto bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+                    >
+                      <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button
+                      (click)="nextScreenshot(project, $event)"
+                      class="pointer-events-auto bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+                    >
+                      <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                  </div>
+                  <!-- Carousel Dots -->
+                  <div
+                    *ngIf="project.screenshots.length > 1"
+                    class="carousel-controls"
+                  >
+                    <span
+                      *ngFor="
+                        let screenshot of project.screenshots;
+                        let i = index
+                      "
+                      (click)="goToScreenshot(project, i, $event)"
+                      class="carousel-dot"
+                      [class.active]="
+                        (screenshotIndices[project.id] || 0) === i
+                      "
+                    ></span>
+                  </div>
+                </div>
+                <!-- Fallback to main image -->
+                <img
+                  *ngIf="
+                    !project.demoVideo &&
+                    (!project.screenshots || project.screenshots.length === 0)
+                  "
+                  [src]="project.img"
+                  [alt]="project.projectName"
+                  class="phone-screen"
+                />
+              </div>
+            </div>
+
+            <!-- Project Info -->
+            <div class="text-center">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-white">
                 {{ project.projectName }}
               </h5>
-            </a>
-            <p
-              class="flex flex-wrap gap-2 py-1 flex-row items-center justify-start text-[10px] md:text-sm"
-            >
-              <span
-                *ngFor="let item of project.techs"
-                class="inline-block header shadow-lg px-2 py-[2px] font-semibold border border-gray-600 rounded-l-full rounded-r-full capitalize"
+              <p
+                class="flex flex-wrap gap-2 py-1 flex-row items-center justify-center text-[10px] md:text-sm mb-3"
               >
-                {{ item }}
-              </span>
-            </p>
-            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              {{ project.projectDesc }}
-            </p>
+                <span
+                  *ngFor="let item of project.techs"
+                  class="inline-block header shadow-lg px-2 py-[2px] font-semibold border border-gray-600 rounded-l-full rounded-r-full capitalize"
+                >
+                  {{ item }}
+                </span>
+              </p>
+              <p class="mb-4 font-normal text-gray-400 text-sm">
+                {{ project.projectDesc }}
+              </p>
 
-            <div class="flex flex-col justify-between space-y-2">
-              <a
-                href="{{ project.projectLink }}"
-                target="_blank"
-                class="shadow-xl py-2 px-4 w-fit rounded-lg bg-[#F8D47A] text-black font-semibold"
-                title="View on Github"
-                >Live Website <i class="fa-solid fa-arrow-trend-up"></i
-              ></a>
-              <a
-                class="shadow-xl py-2 px-4 w-fit rounded-lg bg-black border font-semibold border-opacity-20 border-whitish text-white"
-                href="{{ project.githubLink }}"
-                title="view deployment"
-                >View on Github
-                <i class="fa-brands fa-github" style="color: #fff"></i>
-              </a>
+              <!-- Platform Badges -->
+              <div
+                *ngIf="project.platforms && project.platforms.length > 0"
+                class="flex gap-2 justify-center mb-4"
+              >
+                <span
+                  *ngFor="let platform of project.platforms"
+                  class="px-3 py-1 text-xs rounded bg-gray-800 text-gray-300"
+                >
+                  {{ platform.toUpperCase() }}
+                </span>
+              </div>
+
+              <!-- Store Links & Actions -->
+              <div class="flex flex-col gap-2 items-center">
+                <div
+                  *ngIf="project.storeLinks"
+                  class="flex flex-wrap gap-2 justify-center mb-2"
+                >
+                  <a
+                    *ngIf="project.storeLinks.appStore"
+                    [href]="project.storeLinks.appStore"
+                    target="_blank"
+                    class="shadow-xl py-2 px-4 rounded-lg bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-all"
+                  >
+                    <i class="fa-brands fa-apple mr-2"></i>App Store
+                  </a>
+                  <a
+                    *ngIf="project.storeLinks.playStore"
+                    [href]="project.storeLinks.playStore"
+                    target="_blank"
+                    class="shadow-xl py-2 px-4 rounded-lg bg-[#34A853] text-white font-semibold text-sm hover:bg-[#2d8f47] transition-all"
+                  >
+                    <i class="fa-brands fa-google-play mr-2"></i>Play Store
+                  </a>
+                  <a
+                    *ngIf="project.storeLinks.apk"
+                    [href]="project.storeLinks.apk"
+                    target="_blank"
+                    class="shadow-xl py-2 px-4 rounded-lg bg-black text-white font-semibold text-sm hover:bg-gray-800 transition-all"
+                  >
+                    <i class="fa-solid fa-download mr-2"></i>APK
+                  </a>
+                  <a
+                    *ngIf="project.storeLinks.testflight"
+                    [href]="project.storeLinks.testflight"
+                    target="_blank"
+                    class="shadow-xl py-2 px-4 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-all"
+                  >
+                    <i class="fa-solid fa-plane mr-2"></i>TestFlight
+                  </a>
+                </div>
+                <a
+                  *ngIf="project.projectLink"
+                  [href]="project.projectLink"
+                  target="_blank"
+                  class="shadow-xl py-2 px-4 w-fit rounded-lg bg-[#F8D47A] text-black font-semibold"
+                >
+                  Explore<i class="fa-solid fa-arrow-trend-up"></i>
+                </a>
+                <a
+                  *ngIf="project.githubLink"
+                  [href]="project.githubLink"
+                  target="_blank"
+                  class="shadow-xl py-2 px-4 w-fit rounded-lg bg-black border font-semibold border-opacity-20 border-whitish text-white"
+                >
+                  View on Github
+                  <i class="fa-brands fa-github ml-2"></i>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- Web Project Card -->
+        <div
+          *ngIf="project.category === 'web'"
+          class="max-w-sm border border-opacity-5 border-gray-50 group relative transition-all duration-1000 h-fit rounded-lg shadow bg-[#21201f]"
+        >
+          <div class="bg-[#21201f] rounded-lg">
+            <img
+              class="web-project-image rounded-t-lg group-hover:animate-pulse"
+              [src]="project.img"
+              [alt]="project.projectName"
+            />
+            <div class="p-5">
+              <a href="#">
+                <h5
+                  class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                >
+                  {{ project.projectName }}
+                </h5>
+              </a>
+              <p
+                class="flex flex-wrap gap-2 py-1 flex-row items-center justify-start text-[10px] md:text-sm"
+              >
+                <span
+                  *ngFor="let item of project.techs"
+                  class="inline-block header shadow-lg px-2 py-[2px] font-semibold border border-gray-600 rounded-l-full rounded-r-full capitalize"
+                >
+                  {{ item }}
+                </span>
+              </p>
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                {{ project.projectDesc }}
+              </p>
+
+              <div class="flex flex-col justify-between space-y-2">
+                <a
+                  *ngIf="project.projectLink"
+                  [href]="project.projectLink"
+                  target="_blank"
+                  class="shadow-xl py-2 px-4 w-fit rounded-lg bg-[#F8D47A] text-black font-semibold"
+                  title="View Live Website"
+                  >Live Website <i class="fa-solid fa-arrow-trend-up"></i
+                ></a>
+                <a
+                  *ngIf="project.githubLink"
+                  [href]="project.githubLink"
+                  target="_blank"
+                  class="shadow-xl py-2 px-4 w-fit rounded-lg bg-black border font-semibold border-opacity-20 border-whitish text-white"
+                  title="View on Github"
+                  >View on Github
+                  <i class="fa-brands fa-github" style="color: #fff"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <!-- Empty State -->
+    <div *ngIf="filteredData.length === 0" class="text-center py-12">
+      <p class="text-whitish text-xl exo">
+        No {{ activeTab }} projects available at the moment.
+      </p>
     </div>
   </div>
 </section>

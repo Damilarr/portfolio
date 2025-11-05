@@ -4,34 +4,39 @@
   <div
     class="bg-[#262524] z-20 bg-opacity-80 w-5/6 sm:w-auto shadow-xl backdrop-blur-lg jet-font text-base sm:text-lg flex space-x-4 px-3 rounded-2xl sm:rounded-3xl align-middle justify-between sm:justify-around items-center"
   >
-    <a href="#">
+    <a href="#" aria-label="Home">
       <img
         [src]="currentImgSrc"
         class="h-[4.3rem] sm:h-20 w-auto"
         (mouseover)="startChangingImage()"
         (mouseout)="stopChangingImage()"
-        alt="memoji"
+        alt="Emmanuel Adeyemo - Developer Memoji Avatar"
       />
     </a>
     <a
       (click)="scrollToWorks()"
       class="text-whitish hidden sm:block hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      aria-label="Navigate to featured work section"
       >WORK</a
     >
     <a
       (click)="scrollToAbout()"
       class="text-whitish hidden sm:block hover:text-yelloww active:text-yelloww active:underline hover:underline underline-offset-8"
+      aria-label="Navigate to about section"
       >INFO</a
     >
     <a
       (click)="scrollToContact()"
       class="py-2 px-4 hidden sm:block rounded-lg transition-all duration-300 bg-yelloww hover:bg-white"
+      aria-label="Navigate to contact section"
       >CHAT</a
     >
     <button
       (click)="showMobileNav()"
       class="py-[6px] px-4 sm:hidden block outline-0 rounded-lg"
       [ngClass]="{ 'bg-yelloww': navClosed, 'bg-white': !navClosed }"
+      [attr.aria-label]="navClosed ? 'Open mobile menu' : 'Close mobile menu'"
+      [attr.aria-expanded]="!navClosed"
     >
       MENU
       <i
@@ -40,6 +45,7 @@
           'fa-xmark': !navClosed
         }"
         class="fa-solid"
+        aria-hidden="true"
       ></i>
     </button>
   </div>

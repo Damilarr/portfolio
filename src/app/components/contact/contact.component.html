@@ -1,8 +1,12 @@
 <section
-  class="flex z-20 relative rounded-b-[3rem] space-y-4 md:space-y-0 md:flex-row justify-center md:items-start items-center py-10 flex-col bg-clip-border"
+  class="flex z-20 relative rounded-b-[3rem] space-y-4 md:space-y-0 md:flex-row justify-center md:items-start items-center py-16 px-4 sm:px-6 md:px-10 lg:px-16 flex-col bg-clip-border"
 >
   <div class="flex flex-col space-y-2 md:w-1/2 p-6">
-    <h2 class="header text-2xl">LET's TALK</h2>
+    <h2
+      class="header mb-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+    >
+      LET's TALK
+    </h2>
     <p class="text-whitish text-xl exo">
       Reach out to discuss a project, ask a question, get some feedback or to
       just setup a time to hang out. 👋
@@ -10,7 +14,7 @@
   </div>
   <div class="w-full md:max-w-full md:w-1/2 mx-auto">
     <div class="p-6 sm:rounded-md">
-      <form [formGroup]="contactInfo" (ngSubmit)="onSubmit()">
+      <form [formGroup]="contactInfo" (ngSubmit)="onSubmit()" method="POST">
         <label class="block mb-6">
           <span class="header">Your name</span>
           <input
@@ -44,12 +48,6 @@
             required
           ></textarea>
         </label>
-        <div *ngIf="submitted" class="text-green-500 mb-4">
-          Message sent successfully!
-        </div>
-        <div *ngIf="error" class="text-red-500 mb-4">
-          Error sending message. Please try again.
-        </div>
         <div class="mb-6 items-center justify-between flex">
           <button
             type="submit"
@@ -63,6 +61,26 @@
           </p>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div
+    *ngIf="showToast"
+    [class.toast-success]="toastType === 'success'"
+    [class.toast-error]="toastType === 'error'"
+    class="toast"
+  >
+    <div class="toast-content">
+      <i
+        [class]="
+          toastType === 'success'
+            ? 'fa-solid fa-check-circle'
+            : 'fa-solid fa-exclamation-circle'
+        "
+        class="toast-icon"
+      ></i>
+      <span class="toast-message">{{ toastMessage }}</span>
     </div>
   </div>
 </section>

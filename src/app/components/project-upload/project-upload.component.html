@@ -1,107 +1,631 @@
-<section class="flex flex-col p-8 bg-[#111827]">
-  <form #projectUpload="ngForm" (submit)="uploadProject(projectUpload.value)">
-    <div class="mb-6">
-      <label
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        for="user_avatar"
-        >Upload Image</label
-      >
-      <input
-        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-        aria-describedby="user_avatar_help"
-        id="user_avatar"
-        type="file"
-        [(ngModel)]="img"
-        (change)="getImage($event)"
-        name="img"
-      />
-      <div class="w-full bg-gray-200 my-2 rounded-full dark:bg-gray-700">
-        <div
-          class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-          [style.width]="uploadProgress"
+<section class="flex flex-col min-h-screen bg-[#111827] p-4 sm:p-8">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-white mb-2">Project Management</h1>
+    <p class="text-gray-400">Upload new projects or manage existing ones</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-4 mb-6 border-b border-gray-700">
+    <button
+      (click)="setActiveTab('upload')"
+      [class.active-admin-tab]="activeTab === 'upload'"
+      [class.inactive-admin-tab]="activeTab !== 'upload'"
+      class="admin-tab-button"
+    >
+      <i class="fa-solid fa-upload mr-2"></i>
+      Upload Project
+    </button>
+    <button
+      (click)="setActiveTab('manage')"
+      [class.active-admin-tab]="activeTab === 'manage'"
+      [class.inactive-admin-tab]="activeTab !== 'manage'"
+      class="admin-tab-button"
+    >
+      <i class="fa-solid fa-list mr-2"></i>
+      Manage Projects
+    </button>
+  </div>
+
+  <!-- Upload Tab Content -->
+  <div *ngIf="activeTab === 'upload'" class="bg-[#1f2937] rounded-lg p-6">
+    <h2 class="text-2xl font-semibold text-white mb-6">Upload New Project</h2>
+    <form #projectUpload="ngForm" (submit)="uploadProject(projectUpload.value)">
+      <div class="mb-6">
+        <label
+          class="block mb-2 text-sm font-medium text-gray-300"
+          for="user_avatar"
+          >Upload Image</label
         >
-          {{ uploadProgress }}
+        <input
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+          aria-describedby="user_avatar_help"
+          id="user_avatar"
+          type="file"
+          [(ngModel)]="img"
+          (change)="getImage($event)"
+          name="img"
+          accept="image/*"
+        />
+        <div class="w-full bg-gray-200 my-2 rounded-full dark:bg-gray-700">
+          <div
+            class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+            [style.width]="uploadProgress"
+          >
+            {{ uploadProgress }}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="mb-6">
-      <label
-        for="projectName"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >Project Name</label
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+          <label
+            for="projectName"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Project Name</label
+          >
+          <input
+            type="text"
+            id="projectName"
+            ngModel
+            name="projectName"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="PROJECT NAME"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="category"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Project Category</label
+          >
+          <select
+            id="category"
+            ngModel
+            name="category"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            required
+          >
+            <option value="web">Web</option>
+            <option value="mobile">Mobile</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label
+          for="projectDescription"
+          class="block mb-2 text-sm font-medium text-gray-300"
+          >Project Description</label
+        >
+        <textarea
+          id="projectDescription"
+          ngModel
+          name="projectDesc"
+          rows="3"
+          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Project Description"
+        ></textarea>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+          <label
+            for="githubLink"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Github Link</label
+          >
+          <input
+            type="url"
+            id="githubLink"
+            ngModel
+            name="githubLink"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://github.com/..."
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="projectLink"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Project Link (Live URL)</label
+          >
+          <input
+            type="url"
+            id="projectLink"
+            ngModel
+            name="projectLink"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://example.com"
+          />
+        </div>
+      </div>
+      <div class="mb-6">
+        <label for="techs" class="block mb-2 text-sm font-medium text-gray-300"
+          >Technologies used</label
+        >
+        <input
+          type="text"
+          id="techs"
+          ngModel
+          name="techs"
+          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Angular, TypeScript, Firebase (separate with comma)"
+        />
+      </div>
+      <!-- Mobile-specific media and links -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+          <label
+            for="demoVideo"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Demo Video URL (mp4/webm)</label
+          >
+          <input
+            type="url"
+            id="demoVideo"
+            ngModel
+            name="demoVideo"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://cdn.example.com/demo.mp4"
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="screenshots"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Screenshots (comma-separated URLs)</label
+          >
+          <input
+            type="text"
+            id="screenshots"
+            ngModel
+            name="screenshots"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://img1.jpg, https://img2.jpg"
+          />
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+          <span class="block mb-2 text-sm font-medium text-gray-300"
+            >Platforms</span
+          >
+          <label class="inline-flex items-center mr-4">
+            <input type="checkbox" ngModel name="platformsIOS" class="mr-2" />
+            <span class="text-sm text-gray-300">iOS</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="checkbox"
+              ngModel
+              name="platformsAndroid"
+              class="mr-2"
+            />
+            <span class="text-sm text-gray-300">Android</span>
+          </label>
+        </div>
+        <div class="mb-6"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+          <label
+            for="appStore"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >App Store Link</label
+          >
+          <input
+            type="url"
+            id="appStore"
+            ngModel
+            name="appStore"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://apps.apple.com/..."
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="playStore"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >Play Store Link</label
+          >
+          <input
+            type="url"
+            id="playStore"
+            ngModel
+            name="playStore"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://play.google.com/store/apps/details?id=..."
+          />
+        </div>
+        <div class="mb-6">
+          <label for="apk" class="block mb-2 text-sm font-medium text-gray-300"
+            >APK Link</label
+          >
+          <input
+            type="url"
+            id="apk"
+            ngModel
+            name="apk"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://example.com/app.apk"
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="testflight"
+            class="block mb-2 text-sm font-medium text-gray-300"
+            >TestFlight Link</label
+          >
+          <input
+            type="url"
+            id="testflight"
+            ngModel
+            name="testflight"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="https://testflight.apple.com/..."
+          />
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            ngModel
+            name="isActive"
+            [value]="true"
+            class="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            checked
+          />
+          <span class="text-sm font-medium text-gray-300">
+            Active (Display on portfolio)
+          </span>
+        </label>
+      </div>
+      <button
+        type="submit"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
-      <input
-        type="text"
-        id="projectName"
-        ngModel
-        name="projectName"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-        placeholder="PROJECT NAME"
-        required
-      />
-    </div>
-    <div class="mb-6">
-      <label
-        for="projectDescription"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >Project Description</label
+        <i class="fa-solid fa-plus mr-2"></i>
+        Add Project
+      </button>
+    </form>
+  </div>
+
+  <!-- Manage Tab Content -->
+  <div *ngIf="activeTab === 'manage'" class="bg-[#1f2937] rounded-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-semibold text-white">Manage Projects</h2>
+      <button
+        (click)="loadProjects()"
+        class="text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
       >
-      <input
-        type="text"
-        id="projectDescription"
-        ngModel
-        name="projectDesc"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-        placeholder="Project Description"
-      />
+        <i class="fa-solid fa-refresh mr-2"></i>
+        Refresh
+      </button>
     </div>
-    <div class="mb-6">
-      <label
-        for="githubLink"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >Github Link</label
-      >
-      <input
-        type="text"
-        id="githubLink"
-        ngModel
-        name="githubLink"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-      />
+
+    <!-- Projects List -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-400">
+        <thead class="text-xs text-gray-400 uppercase bg-gray-800">
+          <tr>
+            <th scope="col" class="px-6 py-3">Image</th>
+            <th scope="col" class="px-6 py-3">Name</th>
+            <th scope="col" class="px-6 py-3">Category</th>
+            <th scope="col" class="px-6 py-3">Platforms</th>
+            <th scope="col" class="px-6 py-3">Status</th>
+            <th scope="col" class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let project of projects"
+            class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700"
+          >
+            <td class="px-6 py-4">
+              <img
+                [src]="project.img"
+                [alt]="project.projectName"
+                class="w-16 h-16 object-cover rounded"
+                *ngIf="project.img"
+              />
+              <span class="text-gray-500" *ngIf="!project.img">No image</span>
+            </td>
+            <td class="px-6 py-4 font-medium text-white">
+              {{ project.projectName }}
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2 py-1 text-xs rounded"
+                [class.bg-blue-900]="project.category === 'web'"
+                [class.bg-purple-900]="project.category === 'mobile'"
+                [class.text-blue-300]="project.category === 'web'"
+                [class.text-purple-300]="project.category === 'mobile'"
+              >
+                {{ project.category?.toUpperCase() || "WEB" }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex gap-2">
+                <span
+                  *ngIf="project.platforms?.includes('ios')"
+                  class="px-2 py-1 text-xs rounded bg-gray-700 text-gray-200"
+                  >iOS</span
+                >
+                <span
+                  *ngIf="project.platforms?.includes('android')"
+                  class="px-2 py-1 text-xs rounded bg-gray-700 text-gray-200"
+                  >Android</span
+                >
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2 py-1 text-xs rounded"
+                [class.bg-green-900]="project.isActive"
+                [class.bg-red-900]="!project.isActive"
+                [class.text-green-300]="project.isActive"
+                [class.text-red-300]="!project.isActive"
+              >
+                {{ project.isActive ? "ACTIVE" : "INACTIVE" }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex gap-2">
+                <button
+                  (click)="toggleActive(project)"
+                  [class]="
+                    project.isActive
+                      ? 'text-yellow-600 hover:text-yellow-800'
+                      : 'text-green-600 hover:text-green-800'
+                  "
+                  class="p-2 rounded hover:bg-gray-600"
+                  [title]="project.isActive ? 'Deactivate' : 'Activate'"
+                >
+                  <i
+                    [class]="
+                      project.isActive
+                        ? 'fa-solid fa-eye-slash'
+                        : 'fa-solid fa-eye'
+                    "
+                  ></i>
+                </button>
+                <button
+                  (click)="startEdit(project)"
+                  class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-gray-600"
+                  title="Edit"
+                >
+                  <i class="fa-solid fa-edit"></i>
+                </button>
+                <button
+                  (click)="deleteProject(project)"
+                  class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-gray-600"
+                  title="Delete"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="projects.length === 0" class="text-center py-12">
+        <p class="text-gray-400 text-lg">No projects found</p>
+      </div>
     </div>
-    <div class="mb-6">
-      <label
-        for="projectLink"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >Project Link</label
-      >
-      <input
-        type="text"
-        id="projectLink"
-        ngModel
-        name="projectLink"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-      />
-    </div>
-    <div class="mb-6">
-      <label
-        for="techs"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >Technologies used</label
-      >
-      <input
-        type="text"
-        id="techs"
-        ngModel
-        name="techs"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-        placeholder="separate multiple techs with comma"
-      />
-    </div>
-    <button
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+  </div>
+
+  <!-- Edit Modal -->
+  <div
+    *ngIf="editingProject"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-[#1f2937] rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
     >
-      Add project
-    </button>
-  </form>
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-semibold text-white">Edit Project</h3>
+        <button (click)="cancelEdit()" class="text-gray-400 hover:text-white">
+          <i class="fa-solid fa-times text-xl"></i>
+        </button>
+      </div>
+      <form (ngSubmit)="updateProject()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300">
+              Project Name
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="editForm.projectName"
+              name="editProjectName"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300">
+              Category
+            </label>
+            <select
+              [(ngModel)]="editForm.category"
+              name="editCategory"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="web">Web</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block mb-2 text-sm font-medium text-gray-300">
+            Description
+          </label>
+          <textarea
+            [(ngModel)]="editForm.projectDesc"
+            name="editDesc"
+            rows="3"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          ></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300">
+              Github Link
+            </label>
+            <input
+              type="url"
+              [(ngModel)]="editForm.githubLink"
+              name="editGithubLink"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300">
+              Project Link
+            </label>
+            <input
+              type="url"
+              [(ngModel)]="editForm.projectLink"
+              name="editProjectLink"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block mb-2 text-sm font-medium text-gray-300">
+            Technologies (comma separated)
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.techs"
+            name="editTechs"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+        <!-- Edit: mobile-specific fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >Demo Video URL</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="editForm.demoVideo"
+              name="editDemoVideo"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >Screenshots (comma-separated URLs)</label
+            >
+            <input
+              type="text"
+              [(ngModel)]="editForm.screenshots"
+              name="editScreenshots"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+        </div>
+        <div class="mb-6">
+          <span class="block mb-2 text-sm font-medium text-gray-300"
+            >Platforms</span
+          >
+          <label class="inline-flex items-center mr-4">
+            <input
+              type="checkbox"
+              [(ngModel)]="editForm.platformsIOS"
+              name="editPlatformsIOS"
+              class="mr-2"
+            />
+            <span class="text-sm text-gray-300">iOS</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="checkbox"
+              [(ngModel)]="editForm.platformsAndroid"
+              name="editPlatformsAndroid"
+              class="mr-2"
+            />
+            <span class="text-sm text-gray-300">Android</span>
+          </label>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >App Store Link</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="editForm.appStore"
+              name="editAppStore"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >Play Store Link</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="editForm.playStore"
+              name="editPlayStore"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >APK Link</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="editForm.apk"
+              name="editApk"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-300"
+              >TestFlight Link</label
+            >
+            <input
+              type="url"
+              [(ngModel)]="editForm.testflight"
+              name="editTestflight"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              [(ngModel)]="editForm.isActive"
+              name="editIsActive"
+              class="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span class="text-sm font-medium text-gray-300">
+              Active (Display on portfolio)
+            </span>
+          </label>
+        </div>
+        <div class="flex gap-4">
+          <button
+            type="submit"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700"
+          >
+            <i class="fa-solid fa-save mr-2"></i>
+            Save Changes
+          </button>
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            class="text-white bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </section>

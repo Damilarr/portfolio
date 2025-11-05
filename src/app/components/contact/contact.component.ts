@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment.prod';
 import * as Aos from 'aos';
 import '../../../assets/smtp.js';
 declare let Email: any;
@@ -14,7 +15,9 @@ export class ContactComponent implements OnInit {
   contactInfo: any;
   submitting = false;
   submitted = false;
-  error = false;
+  showToast = false;
+  toastType: 'success' | 'error' = 'success';
+  toastMessage = '';
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient) {
     this.contactInfo = this.formBuilder.group({
@@ -35,14 +38,12 @@ export class ContactComponent implements OnInit {
   ngOnInit(): void {
     Aos.init();
 
-    // Check if we just returned from a form submission
     const formSubmitted = localStorage.getItem('formSubmitted');
     if (formSubmitted === 'true') {
       // Clear the form
       this.contactInfo.reset();
       this.submitted = true;
       setTimeout(() => (this.submitted = false), 5000);
-      // Clear the storage flag
       localStorage.removeItem('formSubmitted');
     }
   }
@@ -52,41 +53,94 @@ export class ContactComponent implements OnInit {
 
     if (this.contactInfo.valid) {
       this.submitting = true;
-      console.log('Valid form submitted', this.contactInfo.value);
+      this.submitted = false;
 
-      localStorage.setItem('formSubmitted', 'true');
+      const recipientEmail = environment.contactEmail || 'mmmm@example.com';
 
       const formData = new FormData();
       formData.append('name', this.contactInfo.value.name);
       formData.append('email', this.contactInfo.value.email);
       formData.append('message', this.contactInfo.value.message);
-      formData.append('_subject', 'New portfolio contact request');
-      formData.append('_captcha', 'true');
-      formData.append('_next', window.location.href);
+      formData.append('_subject', 'New Portfolio Contact Request');
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'box');
 
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://formsubmit.co/0602ea8cd04997f663159d716de0a739';
-      form.style.display = 'none';
+      const returnUrl = `${window.location.origin}${window.location.pathname}#chat`;
+      formData.append('_next', returnUrl);
 
-      formData.forEach((value, key) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value.toString();
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      form.submit();
+      this.http
+        .post(`https://formsubmit.co/ajax/${recipientEmail}`, formData, {
+          headers: { Accept: 'application/json' },
+        })
+        .subscribe({
+          next: (response: any) => {
+            console.log('Form submitted successfully', response);
+            this.submitting = false;
+            this.contactInfo.reset();
+            this.showToastNotification(
+              'success',
+              'Message sent successfully! 🎉'
+            );
+          },
+          error: (error) => {
+            console.error('AJAX submission failed, trying fallback:', error);
+            this.submitFormFallback(recipientEmail, formData);
+          },
+        });
 
       return false;
     } else {
       console.log('Form is invalid');
       Object.keys(this.contactInfo.controls).forEach((key) => {
-        this.contactInfo.get(key).markAsTouched();
+        this.contactInfo.get(key)?.markAsTouched();
       });
+
+      this.showToastNotification(
+        'error',
+        'Please fill in all required fields correctly.'
+      );
+
       return false;
     }
+  }
+
+  submitFormFallback(email: string, formData: FormData) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `https://formsubmit.co/${email}`;
+    form.style.display = 'none';
+    form.setAttribute('enctype', 'multipart/form-data');
+
+    formData.forEach((value, key) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value.toString();
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      this.submitting = false;
+      this.contactInfo.reset();
+      this.showToastNotification('success', 'Message sent successfully! 🎉');
+      setTimeout(() => {
+        if (document.body.contains(form)) {
+          document.body.removeChild(form);
+        }
+      }, 2000);
+    }, 500);
+  }
+
+  showToastNotification(type: 'success' | 'error', message: string) {
+    this.toastType = type;
+    this.toastMessage = message;
+    this.showToast = true;
+
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
   }
 }

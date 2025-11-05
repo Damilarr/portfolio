@@ -1,0 +1,12 @@
+/* Tech pill styling - override global styles */
+.techs {
+  position: relative;
+  transform-origin: center center;
+  width: auto !important; /* Override the w-1/4 from global styles */
+  min-width: fit-content;
+  flex-shrink: 0;
+}
+
+.tech-pill {
+  will-change: transform, opacity;
+}
