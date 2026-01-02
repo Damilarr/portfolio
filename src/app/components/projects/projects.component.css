@@ -16,122 +16,43 @@
   @apply bg-[#f8d47a] opacity-90;
 }
 
-/* Phone Mockup Styles */
-.phone-mockup {
-  position: relative;
-  width: 100%;
-  max-width: 280px;
-  margin: 0 auto;
-  background: #0f0f0f;
-  border-radius: 36px;
-  padding: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6),
-    0 0 0 2px rgba(255, 255, 255, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.05);
+.project-item {
+  @apply relative p-6 bg-[#21201f] transition-all duration-300 rounded-xl;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.phone-mockup::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 140px;
-  height: 24px;
-  background: #0f0f0f;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-  z-index: 10;
+.project-item:hover {
+  transform: translateY(-2px);
+  @apply shadow-lg;
 }
 
-.phone-screen {
-  width: 100%;
-  aspect-ratio: 9 / 19.5;
-  border-radius: 28px;
-  overflow: hidden;
-  background: #000;
-  position: relative;
+.project-item:last-child {
+  border-bottom: none;
 }
 
-.phone-screen img,
-.phone-screen video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.tech-tag {
+  @apply text-xs px-3 py-1 font-medium bg-[#2a2928] text-gray-300 rounded-full border border-gray-700 transition-colors;
 }
 
-.phone-screen video {
-  object-fit: contain;
-  background: #000;
+.project-item:hover .tech-tag {
+  @apply border-gray-600 bg-[#323130];
 }
 
-/* Mobile Project Card */
-.mobile-project-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.link-icon {
+  @apply w-10 h-10 flex items-center justify-center rounded-full bg-[#2a2928] text-gray-400 transition-all duration-300;
 }
 
-/* Web Project Image */
-.web-project-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.link-icon:hover {
+  @apply bg-[#F8D47A] text-[#21201f] transform scale-110;
 }
 
-/* Screenshot Carousel */
-.screenshot-carousel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.screenshot-item {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: none;
-}
-
-.screenshot-item.active {
-  display: block;
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Carousel Controls */
-.carousel-controls {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 5;
-}
-
-.carousel-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
+.project-thumbnail {
+  @apply w-16 h-16 md:w-20 md:h-20 object-cover rounded-xl;
+  border: 2px solid rgba(255, 255, 255, 0.08);
   transition: all 0.3s ease;
 }
 
-.carousel-dot.active {
-  background: rgba(255, 255, 255, 0.9);
-  width: 24px;
-  border-radius: 4px;
+.project-item:hover .project-thumbnail {
+  border-color: rgba(248, 212, 122, 0.4);
+  transform: scale(1.05);
 }
