@@ -47,7 +47,10 @@
 }
 
 .project-thumbnail {
-  @apply w-16 h-16 md:w-20 md:h-20 object-cover rounded-xl;
+  @apply w-16 h-16 md:w-20 md:h-20 rounded-xl;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
   border: 2px solid rgba(255, 255, 255, 0.08);
   transition: all 0.3s ease;
 }
