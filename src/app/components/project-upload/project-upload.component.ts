@@ -46,7 +46,12 @@ export class ProjectUploadComponent implements OnInit {
     getDocs(dbInstance)
       .then((response: any) => {
         this.projects = response.docs.map((item: any) => {
-          return { ...item.data(), id: item.id };
+          const data = item.data();
+          return { 
+            ...data, 
+            id: item.id,
+            isActive: data.isActive !== undefined ? data.isActive : true
+          };
         });
       })
       .catch((err) => {
@@ -90,6 +95,8 @@ export class ProjectUploadComponent implements OnInit {
   }
 
   startEdit(project: any) {
+    this.downloadUrl = '';
+    this.uploadProgress = 0;
     this.editingProject = { ...project };
     this.editForm = {
       projectName: project.projectName || '',
@@ -126,6 +133,8 @@ export class ProjectUploadComponent implements OnInit {
   cancelEdit() {
     this.editingProject = null;
     this.editForm = {};
+    this.downloadUrl = '';
+    this.uploadProgress = 0;
   }
 
   updateProject() {
@@ -156,8 +165,7 @@ export class ProjectUploadComponent implements OnInit {
             .map((t: string) => t.trim())
             .filter((t: string) => t)
         : [],
-      isActive:
-        this.editForm.isActive === true || this.editForm.isActive === 'true',
+      isActive: this.editForm.isActive === true || this.editForm.isActive === 'true',
       demoVideo: this.editForm.demoVideo || null,
       screenshots: this.editForm.screenshots
         ? this.editForm.screenshots
@@ -169,11 +177,17 @@ export class ProjectUploadComponent implements OnInit {
       storeLinks,
     };
 
+    if (this.downloadUrl) {
+      updatedData.img = this.downloadUrl;
+    }
+
     updateDoc(projectRef, updatedData)
       .then(() => {
         alert('Project updated successfully');
         this.editingProject = null;
         this.editForm = {};
+        this.downloadUrl = '';
+        this.uploadProgress = 0;
         this.loadProjects();
       })
       .catch((err) => {
@@ -211,12 +225,7 @@ export class ProjectUploadComponent implements OnInit {
         : [],
       img: this.downloadUrl,
       category: value.category || 'web',
-      isActive:
-        value.isActive === true ||
-        value.isActive === 'true' ||
-        value.isActive === undefined
-          ? true
-          : false,
+      isActive: value.isActive === true || value.isActive === 'true' || value.isActive === '' ? true : false,
       demoVideo: value.demoVideo || null,
       screenshots: value.screenshots
         ? value.screenshots
