@@ -1,0 +1,54 @@
+.gh-link {
+  @apply relative flex w-full flex-col gap-2 pt-6 pb-4 uppercase md:max-w-sm;
+  border-top: 1px solid rgba(238, 235, 221, 0.14);
+}
+
+.gh-label {
+  @apply text-[10px] tracking-[0.35em] text-[#f8d47a];
+}
+
+.gh-name {
+  @apply flex items-center gap-4 font-medium text-whitish;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: color 0.35s ease;
+}
+
+.gh-arrow {
+  @apply text-base;
+  color: #f8d47a;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.gh-handle {
+  @apply text-[10px] tracking-[0.3em];
+  color: rgba(238, 235, 221, 0.4);
+}
+
+/* Sweep line that draws in on hover */
+.gh-rule {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 100%;
+  background: #f8d47a;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gh-link:hover .gh-rule {
+    transform: scaleX(1);
+  }
+
+  .gh-link:hover .gh-name {
+    color: #f8d47a;
+  }
+
+  .gh-link:hover .gh-arrow {
+    transform: translate(0.35rem, -0.35rem);
+  }
+}

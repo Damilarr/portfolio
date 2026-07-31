@@ -1,153 +1,183 @@
 <section
-  class="flex-col relative z-20 flex h-fit justify-around py-16 px-4 sm:px-6 md:px-10 lg:px-16 space-y-5"
+  class="relative z-20 flex h-fit flex-col overflow-hidden py-16 md:py-24"
+  id="works-section"
 >
-  <div class="w-1/2 flex-col space-y-1 pb-6">
-    <h3
-      class="header mb-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
-    >
-      FEATURED WORK
-    </h3>
-  </div>
-
-  <!-- Tabs -->
-  <div class="flex gap-4 mb-8">
-    <button
-      (click)="setActiveTab('web')"
-      [class.active-tab]="activeTab === 'web'"
-      [class.inactive-tab]="activeTab !== 'web'"
-      class="tab-button"
-    >
-      <i class="fa-solid fa-globe mr-2"></i>
-      WEB
-    </button>
-    <button
-      (click)="setActiveTab('mobile')"
-      [class.active-tab]="activeTab === 'mobile'"
-      [class.inactive-tab]="activeTab !== 'mobile'"
-      class="tab-button"
-    >
-      <i class="fa-solid fa-mobile-screen-button mr-2"></i>
-      MOBILE
-    </button>
-  </div>
-
-  <div
-    class="flex flex-col w-full max-w-5xl"
-    data-aos="fade-up"
+  <!-- Head -->
+  <header
+    class="flex flex-col px-4 sm:px-6 md:px-10 lg:px-16"
+    id="works-head"
   >
-    <!-- Project List -->
-    <div *ngFor="let project of filteredData" class="project-item group mb-4">
-      <div class="flex flex-col md:flex-row justify-between items-start gap-6">
-        
-        <!-- Thumbnail -->
-        <div class="shrink-0">
-          <img
-            [src]="project.img"
-            [alt]="project.projectName"
-            class="project-thumbnail"
-          />
+    <div class="flex items-baseline gap-3 overflow-hidden">
+      <span class="eyebrow jet-font">( SELECTED WORK )</span>
+      <span class="hairline"></span>
+      <span class="eyebrow jet-font">{{ pad(filteredData.length) }}</span>
+    </div>
+
+    <h2 class="works-title jet-font">
+      WORK<span class="works-title-accent">/</span>INDEX
+    </h2>
+  </header>
+
+  <!-- Filter -->
+  <div class="filters px-4 sm:px-6 md:px-10 lg:px-16">
+    <button
+      type="button"
+      class="filter jet-font"
+      [class.is-active]="activeTab === 'web'"
+      (click)="setActiveTab('web')"
+    >
+      WEB<sup>{{ pad(countFor('web')) }}</sup>
+    </button>
+    <button
+      type="button"
+      class="filter jet-font"
+      [class.is-active]="activeTab === 'mobile'"
+      (click)="setActiveTab('mobile')"
+    >
+      MOBILE<sup>{{ pad(countFor('mobile')) }}</sup>
+    </button>
+  </div>
+
+  <!-- Index -->
+  <div class="works-index" #indexList>
+    <article
+      class="work-row"
+      *ngFor="let project of filteredData; let i = index"
+      #workRow
+      (mouseenter)="onRowEnter(project)"
+      (mouseleave)="onRowLeave()"
+    >
+      <span class="row-fill" aria-hidden="true"></span>
+
+      <a
+        *ngIf="primaryLink(project) as href"
+        class="row-hit"
+        [href]="href"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.aria-label]="'Open ' + project.projectName"
+      ></a>
+
+      <div class="row-grid">
+        <!-- Index / arrow swap -->
+        <span class="row-index jet-font" aria-hidden="true">
+          <span class="row-index-num">{{ pad(i + 1) }}</span>
+          <span class="row-index-arrow">↗</span>
+        </span>
+
+        <!-- Mobile-only cover -->
+        <div class="row-cover">
+          <img [src]="cover(project)" [alt]="project.projectName" loading="lazy" />
+          <span class="row-cover-index jet-font">{{ pad(i + 1) }}</span>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 space-y-3">
-          <div class="flex flex-wrap items-center gap-3">
-            <h3 class="text-2xl font-bold text-white group-hover:text-[#F8D47A] transition-colors">
-              {{ project.projectName }}
-            </h3>
-            
-            <!-- Platform Badges for Mobile -->
-            <div *ngIf="project.category === 'mobile' && project.platforms" class="flex gap-2 text-gray-400">
-               <span *ngFor="let platform of project.platforms">
-                  <i *ngIf="platform.toLowerCase() === 'ios'" class="fa-brands fa-apple"></i>
-                  <i *ngIf="platform.toLowerCase() === 'android'" class="fa-brands fa-android"></i>
-               </span>
-            </div>
-          </div>
-
-          <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-3xl">
-            {{ project.projectDesc }}
-          </p>
-
-          <!-- Tech Stack -->
-          <div class="flex flex-wrap gap-2 pt-1">
-            <span *ngFor="let tech of project.techs" class="tech-tag">
-              {{ tech }}
+        <div class="row-body">
+          <h3 class="row-title jet-font">
+            {{ project.projectName }}
+            <span
+              *ngIf="project.category === 'mobile' && project.platforms?.length"
+              class="row-platforms"
+            >
+              <i
+                *ngFor="let platform of project.platforms"
+                [class]="platformIcon(platform)"
+              ></i>
             </span>
-          </div>
+          </h3>
+          <p class="row-desc exo">{{ project.projectDesc }}</p>
         </div>
 
-        <!-- Action Links -->
-        <div class="flex items-center gap-3 shrink-0 pt-2 md:pt-0">
-          <!-- Github -->
+        <ul class="row-tech jet-font">
+          <li *ngFor="let tech of (project.techs || []).slice(0, 4)">
+            {{ tech }}
+          </li>
+        </ul>
+
+        <div class="row-actions">
           <a
             *ngIf="project.githubLink"
             [href]="project.githubLink"
             target="_blank"
-            class="link-icon"
-            title="View Code"
+            rel="noopener noreferrer"
+            class="row-icon"
+            title="View code"
+            [attr.aria-label]="project.projectName + ' source code'"
           >
-            <i class="fa-brands fa-github text-xl"></i>
+            <i class="fa-brands fa-github"></i>
           </a>
 
-          <!-- Live Link (Web) -->
           <a
             *ngIf="project.projectLink"
             [href]="project.projectLink"
             target="_blank"
-            class="link-icon"
-            title="Live Demo"
+            rel="noopener noreferrer"
+            class="row-icon"
+            title="Live site"
+            [attr.aria-label]="project.projectName + ' live site'"
           >
-            <i class="fa-solid fa-arrow-up-right-from-square text-lg"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
           </a>
 
-          <!-- Store Links (Mobile) -->
-          <ng-container *ngIf="project.storeLinks">
+          <ng-container *ngIf="project.storeLinks as store">
             <a
-                *ngIf="project.storeLinks.appStore"
-                [href]="project.storeLinks.appStore"
-                target="_blank"
-                class="link-icon"
-                title="App Store"
+              *ngIf="store.appStore"
+              [href]="store.appStore"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="row-icon"
+              title="App Store"
+              [attr.aria-label]="project.projectName + ' on the App Store'"
             >
-                <i class="fa-brands fa-apple text-xl"></i>
+              <i class="fa-brands fa-apple"></i>
             </a>
             <a
-                *ngIf="project.storeLinks.playStore"
-                [href]="project.storeLinks.playStore"
-                target="_blank"
-                class="link-icon"
-                title="Play Store"
+              *ngIf="store.playStore"
+              [href]="store.playStore"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="row-icon"
+              title="Play Store"
+              [attr.aria-label]="project.projectName + ' on Google Play'"
             >
-                <i class="fa-brands fa-google-play text-lg"></i>
+              <i class="fa-brands fa-google-play"></i>
             </a>
             <a
-                *ngIf="project.storeLinks.apk"
-                [href]="project.storeLinks.apk"
-                target="_blank"
-                class="link-icon"
-                title="Download APK"
+              *ngIf="store.apk"
+              [href]="store.apk"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="row-icon"
+              title="Download APK"
+              [attr.aria-label]="project.projectName + ' APK download'"
             >
-                <i class="fa-solid fa-download text-lg"></i>
+              <i class="fa-solid fa-download"></i>
             </a>
             <a
-                *ngIf="project.storeLinks.testflight"
-                [href]="project.storeLinks.testflight"
-                target="_blank"
-                class="link-icon"
-                title="TestFlight"
+              *ngIf="store.testflight"
+              [href]="store.testflight"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="row-icon"
+              title="TestFlight"
+              [attr.aria-label]="project.projectName + ' on TestFlight'"
             >
-                <i class="fa-solid fa-plane text-lg"></i>
+              <i class="fa-solid fa-plane"></i>
             </a>
           </ng-container>
         </div>
       </div>
-    </div>
+    </article>
 
-    <!-- Empty State -->
-    <div *ngIf="filteredData.length === 0" class="text-center py-12">
-      <p class="text-whitish text-xl exo">
-        No {{ activeTab }} projects available at the moment.
-      </p>
+    <!-- Empty state -->
+    <div *ngIf="filteredData.length === 0" class="works-empty jet-font">
+      <span class="works-empty-rule"></span>
+      NO {{ activeTab | uppercase }} PROJECTS IN THE INDEX — YET
     </div>
+  </div>
+
+  <!-- Cursor-following preview (pointer devices only) -->
+  <div class="work-preview" #preview aria-hidden="true">
+    <img #previewImg src="" alt="" />
+    <span class="work-preview-tag jet-font">VIEW ↗</span>
   </div>
 </section>

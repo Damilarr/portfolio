@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ng *)",
+      "Bash(curl -s -o /dev/null http://localhost:4300)",
+      "Bash(\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless=new --disable-gpu --hide-scrollbars --window-size=1440,1600 --virtual-time-budget=12000 --screenshot=works-desktop.png \"http://localhost:4300/#works\")",
+      "Bash(\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom \"http://localhost:4300/\")",
+      "Bash(npm i *)",
+      "Bash(node shot.js)",
+      "Bash(node shot2.js)"
+    ]
+  }
+}
