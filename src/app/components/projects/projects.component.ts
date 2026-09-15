@@ -16,6 +16,15 @@ import { Firestore, getDocs, collection } from '@angular/fire/firestore';
 
 gsap.registerPlugin(ScrollTrigger);
 
+interface ProjectLink {
+  kind: 'live' | 'store' | 'source';
+  label: string;
+  href: string;
+  /** Human readable destination, so visitors know where a link goes before clicking. */
+  display?: string;
+  icon?: string;
+}
+
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
@@ -27,6 +36,7 @@ export class ProjectsComponent
   data: any = [];
   filteredData: any = [];
   activeTab: 'web' | 'mobile' = 'web';
+  previewLabel = 'VIEW';
   screenshotIndices: { [key: string]: number } = {};
 
   @ViewChild('indexList') indexList!: ElementRef<HTMLElement>;
@@ -89,6 +99,7 @@ export class ProjectsComponent
           return {
             ...projectData,
             id: item.id,
+            links: this.buildLinks(projectData),
             category: projectData.category || 'web',
             isActive:
               projectData.isActive !== undefined ? projectData.isActive : true, // Default to true for legacy projects
@@ -146,15 +157,73 @@ export class ProjectsComponent
   }
 
   primaryLink(project: any): string {
-    return (
-      project.projectLink ||
-      project.storeLinks?.appStore ||
-      project.storeLinks?.playStore ||
-      project.storeLinks?.testflight ||
-      project.storeLinks?.apk ||
-      project.githubLink ||
-      ''
-    );
+    return project.links[0]?.href || '';
+  }
+
+  private buildLinks(project: any): ProjectLink[] {
+    const links: ProjectLink[] = [];
+    const store = project.storeLinks || {};
+
+    if (project.projectLink) {
+      links.push({
+        kind: 'live',
+        label: 'LIVE',
+        href: project.projectLink,
+        display: this.displayUrl(project.projectLink),
+      });
+    }
+    if (store.appStore) {
+      links.push({
+        kind: 'store',
+        label: 'APP STORE',
+        href: store.appStore,
+        icon: 'fa-brands fa-apple',
+      });
+    }
+    if (store.playStore) {
+      links.push({
+        kind: 'store',
+        label: 'GOOGLE PLAY',
+        href: store.playStore,
+        icon: 'fa-brands fa-google-play',
+      });
+    }
+    if (store.testflight) {
+      links.push({
+        kind: 'store',
+        label: 'TESTFLIGHT',
+        href: store.testflight,
+        icon: 'fa-solid fa-plane',
+      });
+    }
+    if (store.apk) {
+      links.push({
+        kind: 'store',
+        label: 'APK',
+        href: store.apk,
+        icon: 'fa-solid fa-download',
+      });
+    }
+    if (project.githubLink) {
+      links.push({
+        kind: 'source',
+        label: 'SOURCE',
+        href: project.githubLink,
+        icon: 'fa-brands fa-github',
+      });
+    }
+    return links;
+  }
+
+  /** "https://www.example.com/app/" -> "example.com/app" */
+  private displayUrl(href: string): string {
+    try {
+      const url = new URL(href);
+      const path = url.pathname.replace(/\/+$/, '');
+      return url.host.replace(/^www\./, '') + path;
+    } catch {
+      return href;
+    }
   }
 
   platformIcon(platform: string): string {
@@ -175,6 +244,9 @@ export class ProjectsComponent
 
   onRowEnter(project: any): void {
     if (!this.pointerFine || !this.preview) return;
+    const primary = project.links?.[0];
+    this.previewLabel =
+      primary?.kind === 'source' ? 'SOURCE' : primary ? 'LIVE' : 'VIEW';
     const src = this.cover(project);
     if (src) this.previewImg.nativeElement.src = src;
     gsap.to(this.preview.nativeElement, {

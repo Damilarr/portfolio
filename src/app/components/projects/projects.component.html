@@ -85,6 +85,26 @@
             </span>
           </h3>
           <p class="row-desc exo">{{ project.projectDesc }}</p>
+
+          <ul *ngIf="project.links.length" class="row-links jet-font">
+            <li *ngFor="let link of project.links">
+              <a
+                [href]="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="row-link"
+                [class.is-source]="link.kind === 'source'"
+                [attr.aria-label]="project.projectName + ' - ' + link.label"
+              >
+                <i *ngIf="link.icon" [class]="link.icon" aria-hidden="true"></i>
+                <span class="row-link-label">{{ link.label }}</span>
+                <span *ngIf="link.display" class="row-link-url">{{
+                  link.display
+                }}</span>
+                <span class="row-link-arrow" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          </ul>
         </div>
 
         <ul class="row-tech jet-font">
@@ -92,79 +112,6 @@
             {{ tech }}
           </li>
         </ul>
-
-        <div class="row-actions">
-          <a
-            *ngIf="project.githubLink"
-            [href]="project.githubLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="row-icon"
-            title="View code"
-            [attr.aria-label]="project.projectName + ' source code'"
-          >
-            <i class="fa-brands fa-github"></i>
-          </a>
-
-          <a
-            *ngIf="project.projectLink"
-            [href]="project.projectLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="row-icon"
-            title="Live site"
-            [attr.aria-label]="project.projectName + ' live site'"
-          >
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-
-          <ng-container *ngIf="project.storeLinks as store">
-            <a
-              *ngIf="store.appStore"
-              [href]="store.appStore"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="row-icon"
-              title="App Store"
-              [attr.aria-label]="project.projectName + ' on the App Store'"
-            >
-              <i class="fa-brands fa-apple"></i>
-            </a>
-            <a
-              *ngIf="store.playStore"
-              [href]="store.playStore"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="row-icon"
-              title="Play Store"
-              [attr.aria-label]="project.projectName + ' on Google Play'"
-            >
-              <i class="fa-brands fa-google-play"></i>
-            </a>
-            <a
-              *ngIf="store.apk"
-              [href]="store.apk"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="row-icon"
-              title="Download APK"
-              [attr.aria-label]="project.projectName + ' APK download'"
-            >
-              <i class="fa-solid fa-download"></i>
-            </a>
-            <a
-              *ngIf="store.testflight"
-              [href]="store.testflight"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="row-icon"
-              title="TestFlight"
-              [attr.aria-label]="project.projectName + ' on TestFlight'"
-            >
-              <i class="fa-solid fa-plane"></i>
-            </a>
-          </ng-container>
-        </div>
       </div>
     </article>
 
@@ -178,6 +125,6 @@
   <!-- Cursor-following preview (pointer devices only) -->
   <div class="work-preview" #preview aria-hidden="true">
     <img #previewImg src="" alt="" />
-    <span class="work-preview-tag jet-font">VIEW ↗</span>
+    <span class="work-preview-tag jet-font">{{ previewLabel }} ↗</span>
   </div>
 </section>

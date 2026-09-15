@@ -109,11 +109,16 @@
 .row-hit {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1;
 }
 
+/*
+ * The grid sits above the row-wide hit area but lets clicks fall through to it,
+ * so only the explicit links inside the grid capture their own clicks.
+ */
 .row-grid {
-  @apply relative z-[1] flex flex-col gap-5 px-4 py-8 sm:px-6 md:flex-row md:items-center md:gap-8 md:px-10 md:py-10 lg:px-16;
+  pointer-events: none;
+  @apply relative z-[2] flex flex-col gap-5 px-4 py-8 sm:px-6 md:flex-row md:items-center md:gap-8 md:px-10 md:py-10 lg:px-16;
   transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -212,16 +217,53 @@
   opacity: 0.4;
 }
 
-.row-actions {
-  @apply relative z-[3] flex shrink-0 items-center gap-2;
+.row-links {
+  @apply mt-5 flex flex-wrap items-center gap-x-6 gap-y-1 text-[11px] uppercase tracking-[0.25em];
 }
 
-.row-icon {
-  @apply flex h-10 w-10 items-center justify-center rounded-full text-sm;
-  border: 1px solid var(--line);
-  color: rgba(238, 235, 221, 0.6);
-  transition: color 0.35s ease, border-color 0.35s ease,
-    background-color 0.35s ease, transform 0.35s ease;
+.row-link {
+  @apply -mx-1 inline-flex items-center gap-2 px-1 py-2;
+  pointer-events: auto;
+  color: var(--ink);
+  transition: color 0.35s ease;
+}
+
+.row-link.is-source {
+  color: rgba(238, 235, 221, 0.55);
+}
+
+.row-link-label {
+  color: var(--accent);
+  transition: color 0.35s ease;
+}
+
+.row-link.is-source .row-link-label {
+  color: inherit;
+}
+
+/* The destination itself, shown as-is so it reads like a real address */
+.row-link-url {
+  @apply text-xs normal-case tracking-normal;
+  text-decoration: underline;
+  text-decoration-color: rgba(248, 212, 122, 0.45);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.35s ease;
+}
+
+.row-link-arrow {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.row-link:hover .row-link-arrow,
+.row-link:focus-visible .row-link-arrow {
+  transform: translate(2px, -2px);
+}
+
+.row-link:hover .row-link-url,
+.row-link:focus-visible .row-link-url {
+  text-decoration-color: currentColor;
 }
 
 /* ----------------------------------------------------- hover choreography */
@@ -255,16 +297,21 @@
     transform: translateY(0);
   }
 
-  .work-row:hover .row-icon {
-    border-color: rgba(33, 32, 31, 0.3);
+  .work-row:hover .row-link,
+  .work-row:hover .row-link-label {
     color: var(--void);
   }
 
-  .row-icon:hover {
-    background: var(--void);
-    border-color: var(--void);
-    color: var(--ink);
-    transform: scale(1.08);
+  .work-row:hover .row-link.is-source {
+    color: rgba(33, 32, 31, 0.65);
+  }
+
+  .work-row:hover .row-link-url {
+    text-decoration-color: rgba(33, 32, 31, 0.35);
+  }
+
+  .work-row:hover .row-link:hover .row-link-url {
+    text-decoration-color: currentColor;
   }
 }
 
