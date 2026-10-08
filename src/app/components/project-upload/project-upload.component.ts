@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment.prod';
 import {
   Firestore,
   addDoc,
@@ -9,6 +8,7 @@ import {
   updateDoc,
   deleteDoc,
 } from '@angular/fire/firestore';
+import { CloudinaryService } from 'src/app/service/cloudinary.service';
 
 @Component({
   selector: 'app-project-upload',
@@ -21,20 +21,23 @@ export class ProjectUploadComponent implements OnInit {
   uploadProgress: any = 0;
 
   // Tab management
-  activeTab: 'upload' | 'manage' = 'upload';
+  activeTab: 'upload' | 'manage' | 'certificates' = 'upload';
 
   // Project management
   projects: any[] = [];
   editingProject: any = null;
   editForm: any = {};
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private cloudinary: CloudinaryService
+  ) {}
 
   ngOnInit(): void {
     this.loadProjects();
   }
 
-  setActiveTab(tab: 'upload' | 'manage') {
+  setActiveTab(tab: 'upload' | 'manage' | 'certificates') {
     this.activeTab = tab;
     if (tab === 'manage') {
       this.loadProjects();
@@ -238,58 +241,24 @@ export class ProjectUploadComponent implements OnInit {
     };
     this.addData(projectArray);
   }
-  getImage = async (event: Event) => {
+  getImage(event: Event) {
     const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      const file = target.files[0];
-      this.uploadProgress = '0%';
+    const file = target.files?.[0];
+    if (!file) return;
+    this.uploadProgress = '0%';
 
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', environment.cloudinary.uploadPreset);
-        formData.append('folder', 'portfolio');
-
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percentComplete = Math.round((e.loaded / e.total) * 100);
-            this.uploadProgress = `${percentComplete}%`;
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            this.downloadUrl = response.secure_url;
-            this.uploadProgress = '100%';
-            console.log('File uploaded to Cloudinary:', this.downloadUrl);
-          } else {
-            console.error('Upload failed:', xhr.responseText);
-            alert('Image upload failed. Please try again.');
-            this.uploadProgress = '0%';
-          }
-        });
-
-        xhr.addEventListener('error', () => {
-          console.error('Upload error');
-          alert('Image upload failed. Please try again.');
-          this.uploadProgress = '0%';
-        });
-
-        xhr.open(
-          'POST',
-          `https://api.cloudinary.com/v1_1/${environment.cloudinary.cloudName}/image/upload`
-        );
-        xhr.send(formData);
-      } catch (error) {
-        console.error('Upload error:', error);
+    this.cloudinary.upload(file, 'portfolio').subscribe({
+      next: (state) => {
+        this.uploadProgress = `${state.progress}%`;
+        if (state.url) this.downloadUrl = state.url;
+      },
+      error: (err) => {
+        console.error('Upload failed:', err);
         alert('Image upload failed. Please try again.');
         this.uploadProgress = '0%';
-      }
-    }
-  };
+      },
+    });
+  }
   addData(value: any) {
     const dbInstance = collection(this.firestore, 'projects');
     addDoc(dbInstance, value)

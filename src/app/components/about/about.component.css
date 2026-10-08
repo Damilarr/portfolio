@@ -1,3 +1,60 @@
+.about-inner {
+  @apply flex w-full flex-col py-16 md:py-24;
+}
+
+.eyebrow {
+  @apply text-[10px] uppercase tracking-[0.35em] text-[#f8d47a] sm:text-xs;
+  white-space: nowrap;
+}
+
+.hairline {
+  flex: 1;
+  height: 1px;
+  background: rgba(238, 235, 221, 0.14);
+  transform: translateY(-3px);
+}
+
+.about-title {
+  @apply mt-4 font-bold uppercase text-whitish;
+  font-size: clamp(3rem, 12vw, 9.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+}
+
+.about-grid {
+  @apply mt-10 grid grid-cols-1 gap-12 md:mt-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20;
+}
+
+.about-desc {
+  @apply text-lg text-whitish sm:text-xl md:text-2xl;
+  line-height: 1.55;
+}
+
+.about-stack {
+  @apply flex flex-col self-start;
+  border-top: 1px solid rgba(238, 235, 221, 0.14);
+}
+
+.stack-row {
+  @apply flex flex-col gap-3 py-5 sm:flex-row sm:items-baseline sm:gap-6;
+  border-bottom: 1px solid rgba(238, 235, 221, 0.14);
+}
+
+.stack-row dt {
+  @apply shrink-0 text-xs tracking-[0.3em] text-[#f8d47a] sm:w-36;
+}
+
+.stack-index {
+  @apply mr-3;
+  color: rgba(238, 235, 221, 0.35);
+}
+
+.stack-row dd {
+  @apply flex flex-wrap gap-x-5 gap-y-1 text-sm;
+  color: rgba(238, 235, 221, 0.75);
+  line-height: 1.7;
+}
+
 /* Tech pill styling - override global styles */
 .techs {
   position: relative;
@@ -9,4 +66,10 @@
 
 .tech-pill {
   will-change: transform, opacity;
+  color: rgba(238, 235, 221, 0.85);
+}
+
+/* Logo SVGs ship dark; tint them to match the icon font */
+.tech-pill img {
+  filter: brightness(0) invert(0.9);
 }

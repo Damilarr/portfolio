@@ -1,0 +1,396 @@
+:host {
+  --ink: #eeebdd;
+  --paper: #eeebdd;
+  --void: #21201f;
+  --accent: #f8d47a;
+  --muted: rgba(238, 235, 221, 0.5);
+  --line: rgba(238, 235, 221, 0.14);
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  display: block;
+  min-height: 100vh;
+  background: var(--void);
+  color: var(--ink);
+}
+
+.certs {
+  @apply mx-auto flex min-h-screen w-full flex-col px-4 sm:px-6 md:px-10 lg:px-16;
+  max-width: 1440px;
+}
+
+/* ------------------------------------------------------------------ head */
+
+.certs-head {
+  @apply pb-10 pt-6 md:pb-16 md:pt-10;
+}
+
+.certs-topbar {
+  @apply mb-14 flex items-center justify-between text-xs tracking-[0.25em] md:mb-24;
+}
+
+.back-link {
+  color: var(--muted);
+  transition: color 0.3s ease;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  color: var(--accent);
+}
+
+.eyebrow {
+  @apply text-[10px] uppercase tracking-[0.35em] sm:text-xs;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.hairline {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  transform: translateY(-3px);
+}
+
+.certs-title {
+  @apply mt-4 font-bold uppercase;
+  color: var(--ink);
+  font-size: clamp(2.4rem, 10.5vw, 8.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+}
+
+/* ---------------------------------------------------------------- states */
+
+.certs-state {
+  @apply flex flex-col items-start gap-4 py-24 text-xs tracking-[0.3em];
+  color: var(--muted);
+}
+
+.state-retry {
+  color: var(--accent);
+  letter-spacing: inherit;
+}
+
+.dot-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 0.75rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ wall */
+
+.certs-wall {
+  @apply flex flex-col;
+  border-top: 1px solid var(--line);
+}
+
+.cert {
+  @apply relative grid items-center gap-8 py-12 md:gap-12 md:py-20 lg:gap-20;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 2rem;
+  opacity: 0;
+  animation: rise 0.9s var(--ease) forwards;
+  animation-delay: calc(min(var(--i, 0), 6) * 90ms + 120ms);
+}
+
+@media (min-width: 768px) {
+  .cert {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .cert.is-flipped {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .cert.is-flipped .cert-frame-wrap {
+    order: 2;
+  }
+}
+
+/* -------------------------------------------------------- framed artwork */
+
+.cert-frame-wrap {
+  perspective: 1400px;
+}
+
+/* A paper mat, hung slightly off-level; it settles straight when you look at it. */
+.cert-frame {
+  @apply relative block w-full;
+  padding: clamp(10px, 2.2vw, 22px);
+  background: var(--paper);
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 30px 60px -25px rgba(0, 0, 0, 0.75), 0 12px 24px -12px rgba(0, 0, 0, 0.5);
+  transform: rotate(-1.1deg);
+  transition: transform 0.7s var(--ease), box-shadow 0.7s var(--ease);
+  cursor: zoom-in;
+}
+
+.cert.is-flipped .cert-frame {
+  transform: rotate(0.9deg);
+}
+
+.cert:hover .cert-frame,
+.cert-frame:focus-visible,
+.cert.is-target .cert-frame {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 45px 80px -30px rgba(0, 0, 0, 0.85), 0 18px 30px -14px rgba(0, 0, 0, 0.55);
+}
+
+.cert-frame:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+}
+
+/* Certificates come in different shapes, so the image keeps its own proportions. */
+.cert-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 120px;
+  box-shadow: 0 0 0 1px rgba(33, 32, 31, 0.08);
+}
+
+.cert-frame-empty {
+  @apply flex items-center justify-center text-xs tracking-[0.3em];
+  aspect-ratio: 1.414 / 1;
+  color: rgba(33, 32, 31, 0.4);
+}
+
+.cert-zoom {
+  @apply absolute bottom-4 right-4 rounded-full px-3 py-1.5 text-[10px] tracking-[0.25em];
+  background: var(--void);
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.4s var(--ease);
+}
+
+.cert-frame:hover .cert-zoom,
+.cert-frame:focus-visible .cert-zoom {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------- plaque */
+
+.cert-plaque {
+  @apply relative flex flex-col;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--line);
+  transition: border-color 0.5s ease;
+}
+
+.cert.is-target .cert-plaque {
+  border-left-color: var(--accent);
+}
+
+.cert-plaque-top {
+  @apply mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] tracking-[0.3em] sm:text-xs;
+}
+
+.cert-no {
+  color: var(--muted);
+}
+
+.cert-linked {
+  color: var(--void);
+  background: var(--accent);
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  animation: blink-in 1.6s var(--ease) both;
+}
+
+.cert-meta {
+  @apply flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em];
+  color: var(--accent);
+}
+
+.cert-title {
+  @apply mt-3 font-bold uppercase;
+  color: var(--ink);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.cert-desc {
+  @apply mt-5 text-base md:text-lg;
+  color: rgba(238, 235, 221, 0.7);
+}
+
+.cert-skills {
+  @apply mt-6 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.18em] sm:text-[11px];
+}
+
+.cert-skills li {
+  @apply rounded-full px-3 py-1;
+  border: 1px solid var(--line);
+  color: rgba(238, 235, 221, 0.75);
+}
+
+.cert-actions {
+  @apply mt-8 flex flex-wrap items-center gap-3 text-xs tracking-[0.15em];
+}
+
+.cert-verify {
+  @apply inline-flex items-center gap-2 rounded-md px-4 py-3 font-medium;
+  background: var(--accent);
+  color: var(--void);
+  transition: background 0.3s ease, transform 0.3s var(--ease);
+}
+
+.cert-verify:hover,
+.cert-verify:focus-visible {
+  background: var(--paper);
+  transform: translateY(-2px);
+}
+
+.cert-copy {
+  @apply inline-flex max-w-full items-center gap-2 rounded-md px-4 py-3 text-left;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.cert-copy:hover,
+.cert-copy:focus-visible {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.cert-hash {
+  color: var(--accent);
+}
+
+.cert-id {
+  @apply mt-5 text-[10px] tracking-[0.25em];
+  color: rgba(238, 235, 221, 0.35);
+  overflow-wrap: anywhere;
+}
+
+.cert-id span {
+  @apply ml-2 tracking-normal;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.certs-foot {
+  @apply mt-auto flex flex-wrap items-center justify-between gap-4 py-10 text-[10px] tracking-[0.3em] sm:text-xs;
+  color: var(--muted);
+}
+
+.certs-foot a {
+  transition: color 0.3s ease;
+}
+
+.certs-foot a:hover {
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- lightbox */
+
+.lightbox {
+  @apply fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 p-4 sm:p-10;
+  background: rgba(20, 19, 18, 0.94);
+  backdrop-filter: blur(6px);
+  animation: fade 0.3s ease both;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: calc(100vh - 9rem);
+  object-fit: contain;
+  background: #fff;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  cursor: default;
+}
+
+.lightbox-close {
+  @apply absolute right-4 top-4 text-xs tracking-[0.3em] sm:right-8 sm:top-8;
+  color: var(--accent);
+}
+
+.lightbox-caption {
+  @apply text-center text-xs uppercase tracking-[0.2em];
+  color: var(--ink);
+  cursor: default;
+}
+
+.lightbox-caption span {
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ keyframes */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes blink-in {
+  0%,
+  20%,
+  40% {
+    opacity: 0;
+  }
+  10%,
+  30%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cert {
+    animation: none;
+    opacity: 1;
+  }
+
+  .cert-frame,
+  .cert.is-flipped .cert-frame {
+    transform: none;
+    transition: none;
+  }
+
+  .cert-linked,
+  .lightbox,
+  .dot-pulse {
+    animation: none;
+  }
+}

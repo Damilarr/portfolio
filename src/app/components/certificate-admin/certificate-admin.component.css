@@ -1,0 +1,30 @@
+.label {
+  @apply block mb-2 text-sm font-medium text-gray-300;
+}
+
+.field {
+  @apply block w-full p-2.5 text-sm text-white bg-gray-700 border border-gray-600 rounded-lg placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.hint {
+  @apply mt-2 text-xs text-gray-500;
+}
+
+.slug-prefix {
+  @apply flex items-center px-3 text-sm text-gray-400 bg-gray-800 whitespace-nowrap;
+}
+
+.preview-mat {
+  @apply flex items-center justify-center rounded;
+  background: #eeebdd;
+  padding: 12px;
+  min-height: 180px;
+}
+
+.preview-mat img {
+  @apply block w-full h-auto bg-white;
+}
+
+.row-btn {
+  @apply px-3 py-1.5 text-sm rounded-md text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors;
+}

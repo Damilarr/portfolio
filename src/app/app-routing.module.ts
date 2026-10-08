@@ -8,6 +8,7 @@ import { ProjectUploadComponent } from './components/project-upload/project-uplo
 import { ProjectsComponent } from './components/projects/projects.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { AboutComponent } from './components/about/about.component';
+import { CertificatesComponent } from './components/certificates/certificates.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -19,6 +20,11 @@ const routes: Routes = [
       { path: 'chat', component: ContactComponent },
       { path: 'about', component: AboutComponent },
     ],
+  },
+  {
+    path: 'certificates',
+    component: CertificatesComponent,
+    title: 'Certificates | Emmanuel Adeyemo',
   },
   { path: 'admin', component: AdminComponent },
   {

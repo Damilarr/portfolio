@@ -1,0 +1,262 @@
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+  <!-- Form -->
+  <form class="bg-[#1f2937] rounded-lg p-6" (ngSubmit)="save()" novalidate>
+    <div class="flex items-center justify-between mb-6 gap-4">
+      <h2 class="text-2xl font-semibold text-white">
+        {{ editing ? 'Edit Certificate' : 'Add Certificate' }}
+      </h2>
+      <button
+        *ngIf="editing"
+        type="button"
+        (click)="resetForm()"
+        class="text-sm text-gray-400 hover:text-white"
+      >
+        Cancel edit
+      </button>
+    </div>
+
+    <div class="mb-6">
+      <label class="label" for="certFile">Certificate image or PDF</label>
+      <input
+        id="certFile"
+        type="file"
+        accept="image/*,application/pdf"
+        (change)="onFileSelected($event)"
+        class="block w-full text-sm border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-gray-700 border-gray-600"
+      />
+      <p class="hint">
+        PDFs are fine, the first page is shown as the preview.
+        <span *ngIf="editing">Leave empty to keep the current file.</span>
+      </p>
+      <div *ngIf="uploading || uploadProgress" class="w-full my-2 rounded-full bg-gray-700">
+        <div
+          class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full transition-all"
+          [style.width.%]="uploadProgress"
+        >
+          {{ uploadProgress }}%
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+      <div class="mb-6">
+        <label class="label" for="certTitle">Title</label>
+        <input
+          id="certTitle"
+          name="title"
+          class="field"
+          placeholder="Introduction to Modern AI"
+          [ngModel]="form.title"
+          (ngModelChange)="onTitleChange($event)"
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label class="label" for="certIssuer">Issued by (platform)</label>
+        <input
+          id="certIssuer"
+          name="issuer"
+          class="field"
+          placeholder="Coursera, Cisco Networking Academy..."
+          [(ngModel)]="form.issuer"
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label class="label" for="certDate">Issued on</label>
+        <input
+          id="certDate"
+          name="issuedOn"
+          class="field"
+          placeholder="YYYY-MM or YYYY"
+          [(ngModel)]="form.issuedOn"
+        />
+      </div>
+      <div class="mb-6">
+        <label class="label" for="certCredentialId">Credential ID (optional)</label>
+        <input
+          id="certCredentialId"
+          name="credentialId"
+          class="field"
+          placeholder="G5WLBEVHA3PX"
+          [(ngModel)]="form.credentialId"
+        />
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="label" for="certUrl">Verification link on the platform</label>
+      <input
+        id="certUrl"
+        name="credentialUrl"
+        type="url"
+        class="field"
+        placeholder="https://coursera.org/verify/..."
+        [(ngModel)]="form.credentialUrl"
+      />
+    </div>
+
+    <div class="mb-6">
+      <label class="label" for="certDesc">Short description (optional)</label>
+      <textarea
+        id="certDesc"
+        name="description"
+        rows="3"
+        class="field"
+        placeholder="What the course covered, in a sentence or two"
+        [(ngModel)]="form.description"
+      ></textarea>
+    </div>
+
+    <div class="mb-6">
+      <label class="label" for="certSkills">Skills (comma separated)</label>
+      <input
+        id="certSkills"
+        name="skills"
+        class="field"
+        placeholder="Machine Learning, Prompt Design"
+        [(ngModel)]="form.skills"
+      />
+    </div>
+
+    <div class="mb-6">
+      <label class="label" for="certSlug">Link anchor</label>
+      <div class="flex items-stretch rounded-lg overflow-hidden border border-gray-600">
+        <span class="slug-prefix">/certificates#</span>
+        <input
+          id="certSlug"
+          name="slug"
+          class="field !border-0 !rounded-none"
+          placeholder="intro-to-modern-ai"
+          [ngModel]="form.slug"
+          (ngModelChange)="onSlugChange($event)"
+        />
+      </div>
+      <p class="hint">
+        This is the address you paste into your CV. It is filled in from the
+        title, you can shorten it.
+      </p>
+      <p
+        *ngIf="editing && form.slug !== editing.slug"
+        class="hint !text-amber-400"
+      >
+        Changing this breaks any link that already points to #{{ editing.slug }}.
+      </p>
+    </div>
+
+    <label class="flex items-center gap-3 mb-6 text-sm text-gray-300 cursor-pointer">
+      <input
+        type="checkbox"
+        name="isActive"
+        [(ngModel)]="form.isActive"
+        class="w-4 h-4 rounded"
+      />
+      Show on the public certificates page
+    </label>
+
+    <p *ngIf="error" class="mb-4 text-sm text-red-400" role="alert">{{ error }}</p>
+
+    <button
+      type="submit"
+      [disabled]="uploading || saving"
+      class="text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5"
+    >
+      {{
+        uploading
+          ? 'Uploading...'
+          : saving
+          ? 'Saving...'
+          : editing
+          ? 'Update Certificate'
+          : 'Add Certificate'
+      }}
+    </button>
+  </form>
+
+  <!-- Preview -->
+  <aside class="bg-[#1f2937] rounded-lg p-6 h-fit">
+    <h3 class="text-lg font-semibold text-white mb-4">Preview</h3>
+    <div class="preview-mat">
+      <img
+        *ngIf="form.fileUrl && !previewFailed; else noPreview"
+        [src]="previewUrl"
+        alt="Certificate preview"
+        (error)="previewFailed = true"
+      />
+      <ng-template #noPreview>
+        <p class="text-sm text-gray-500 p-8 text-center">
+          <ng-container *ngIf="previewFailed; else emptyPreview">
+            The preview couldn't be generated. If this is a PDF, check that
+            "Allow delivery of PDF and ZIP files" is enabled in Cloudinary
+            security settings, or upload an image instead.
+          </ng-container>
+          <ng-template #emptyPreview>Upload a file to see it here.</ng-template>
+        </p>
+      </ng-template>
+    </div>
+    <p *ngIf="form.title" class="mt-4 text-white font-semibold">{{ form.title }}</p>
+    <p *ngIf="form.issuer || form.issuedOn" class="text-sm text-gray-400">
+      {{ form.issuer }}<span *ngIf="form.issuer && form.issuedOn"> · </span>{{ formatIssuedOn(form.issuedOn) }}
+    </p>
+    <p *ngIf="form.slug" class="mt-3 text-xs text-blue-300 break-all">
+      {{ permalink(form.slug) }}
+    </p>
+  </aside>
+</div>
+
+<!-- Existing certificates -->
+<div class="bg-[#1f2937] rounded-lg p-6 mt-6">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-semibold text-white">Certificates</h2>
+    <a
+      routerLink="/certificates"
+      target="_blank"
+      class="text-sm text-blue-400 hover:text-blue-300"
+    >
+      Open public page ↗
+    </a>
+  </div>
+
+  <p *ngIf="loading" class="text-gray-400">Loading...</p>
+  <p *ngIf="!loading && !certificates.length" class="text-gray-400">
+    No certificates yet.
+  </p>
+
+  <ul class="flex flex-col divide-y divide-gray-700">
+    <li
+      *ngFor="let cert of certificates"
+      class="flex flex-col sm:flex-row sm:items-center gap-4 py-4"
+      [class.opacity-50]="!cert.isActive"
+    >
+      <img
+        *ngIf="cert.fileUrl"
+        [src]="thumb(cert)"
+        [alt]="cert.title"
+        class="w-28 h-20 object-cover rounded bg-white shrink-0"
+      />
+      <div class="flex-1 min-w-0">
+        <p class="text-white font-medium truncate">{{ cert.title }}</p>
+        <p class="text-sm text-gray-400">
+          {{ cert.issuer }}<span *ngIf="cert.issuedOn"> · {{ formatIssuedOn(cert.issuedOn) }}</span>
+        </p>
+        <button
+          type="button"
+          (click)="copyLink(cert.slug)"
+          class="text-xs text-blue-300 hover:text-blue-200 break-all text-left"
+          title="Copy link"
+        >
+          #{{ cert.slug }} <i class="fa-regular fa-copy ml-1"></i>
+        </button>
+      </div>
+      <div class="flex gap-2 shrink-0">
+        <button type="button" class="row-btn" (click)="toggleActive(cert)">
+          {{ cert.isActive ? 'Hide' : 'Show' }}
+        </button>
+        <button type="button" class="row-btn" (click)="startEdit(cert)">Edit</button>
+        <button type="button" class="row-btn !text-red-400 hover:!bg-red-900/40" (click)="remove(cert)">
+          Delete
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

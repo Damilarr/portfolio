@@ -23,32 +23,54 @@ export class AboutComponent implements OnInit, AfterViewInit, OnDestroy {
   private marqueeContent: HTMLElement | null = null;
 
   techStack: TechItem[] = [
-    { name: 'HTML', iconClass: 'fa-brands fa-html5' },
-    { name: 'CSS', iconClass: 'fa-brands fa-css3-alt' },
-    { name: 'JavaScript', iconClass: 'fa-brands fa-js' },
-    { name: 'BootStrap', iconClass: 'fa-brands fa-bootstrap' },
-    { name: 'Angular', iconClass: 'fa-brands fa-angular' },
-    {
-      name: 'Express.js',
-      imgSrc: '../../../assets/Images/express-svgrepo-com.svg',
-    },
-    {
-      name: 'MongoDB',
-      imgSrc: '../../../assets/Images/mongodb-svgrepo-com.svg',
-    },
-    {
-      name: 'TailwindCSS',
-      imgSrc: '../../../assets/Images/tailwindcss-svgrepo-com.svg',
-    },
     {
       name: 'TypeScript',
       imgSrc: '../../../assets/Images/typescript-svgrepo-com.svg',
     },
-    { name: 'Github', iconClass: 'fa-brands fa-github' },
+    { name: 'JavaScript', iconClass: 'fa-brands fa-js' },
+    { name: 'Python', iconClass: 'fa-brands fa-python' },
+    { name: 'React', iconClass: 'fa-brands fa-react' },
+    { name: 'Next.js', iconClass: 'fa-solid fa-n' },
+    { name: 'Angular', iconClass: 'fa-brands fa-angular' },
+    { name: 'Node.js', iconClass: 'fa-brands fa-node-js' },
+    {
+      name: 'Express.js',
+      imgSrc: '../../../assets/Images/express-svgrepo-com.svg',
+    },
+    { name: 'Django', iconClass: 'fa-solid fa-server' },
+    { name: 'FastAPI', iconClass: 'fa-solid fa-bolt' },
+    { name: 'PostgreSQL', iconClass: 'fa-solid fa-database' },
+    {
+      name: 'MongoDB',
+      imgSrc: '../../../assets/Images/mongodb-svgrepo-com.svg',
+    },
+    { name: 'LLMs & Tool Calling', iconClass: 'fa-solid fa-wand-magic-sparkles' },
+    { name: 'Voice AI (LiveKit)', iconClass: 'fa-solid fa-microphone-lines' },
+    { name: 'Computer Vision', iconClass: 'fa-solid fa-eye' },
+    { name: 'Docker', iconClass: 'fa-brands fa-docker' },
+    { name: 'GitHub Actions', iconClass: 'fa-brands fa-github' },
+    { name: 'ArgoCD', iconClass: 'fa-solid fa-rotate' },
+    { name: 'Google Cloud', iconClass: 'fa-brands fa-google' },
+    { name: 'Cloudflare', iconClass: 'fa-brands fa-cloudflare' },
+    {
+      name: 'TailwindCSS',
+      imgSrc: '../../../assets/Images/tailwindcss-svgrepo-com.svg',
+    },
     { name: 'Git', iconClass: 'fa-brands fa-git-alt' },
   ];
 
+  stackGroups = [
+    { label: 'FRONTEND', items: ['React', 'Next.js', 'Angular', 'TypeScript', 'Tailwind'] },
+    { label: 'BACKEND', items: ['Django', 'FastAPI', 'Node.js', 'PostgreSQL', 'Prisma'] },
+    { label: 'AI', items: ['Voice agents', 'Computer vision', 'LiveKit', 'OpenAI Realtime', 'Gemini', 'Tool calling'] },
+    { label: 'INFRA', items: ['Docker', 'GitHub Actions', 'ArgoCD', 'GCP', 'Cloudflare'] },
+  ];
+
   constructor() {}
+
+  pad(n: number): string {
+    return n.toString().padStart(2, '0');
+  }
 
   ngOnInit(): void {
     Aos.init();
@@ -65,11 +87,12 @@ export class AboutComponent implements OnInit, AfterViewInit, OnDestroy {
     const section = document.getElementById('about-section');
     const aboutTitle = document.getElementById('about-title');
     const aboutDescription = document.getElementById('about-description');
+    const aboutStack = document.getElementById('about-stack');
 
-    if (!section || !aboutTitle || !aboutDescription) return;
+    if (!section || !aboutTitle || !aboutDescription || !aboutStack) return;
 
     // Set initial states
-    gsap.set([aboutTitle, aboutDescription], {
+    gsap.set([aboutTitle, aboutDescription, aboutStack], {
       opacity: 0,
       y: 50,
     });
@@ -100,6 +123,15 @@ export class AboutComponent implements OnInit, AfterViewInit, OnDestroy {
         ease: 'power3.out',
       },
       '-=0.5'
+    ).to(
+      aboutStack,
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+      },
+      '-=0.9'
     );
 
     // Parallax effect for  text
@@ -142,7 +174,8 @@ export class AboutComponent implements OnInit, AfterViewInit, OnDestroy {
     //infinite scrolling animation
     this.marqueeAnimation = gsap.to(marqueeContent, {
       x: -firstHalf,
-      duration: 20,
+      // Constant speed regardless of how many pills there are
+      duration: firstHalf / 70,
       ease: 'none',
       repeat: -1,
     });

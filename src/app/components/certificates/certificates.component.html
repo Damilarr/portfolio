@@ -1,0 +1,165 @@
+<main class="certs">
+  <header class="certs-head">
+    <div class="certs-topbar jet-font">
+      <a routerLink="/" class="back-link">
+        <span aria-hidden="true">←</span> DAMILARR.DEV
+      </a>
+      <a href="https://github.com/Damilarr" target="_blank" rel="noopener noreferrer" class="back-link">
+        GITHUB <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <div class="flex items-baseline gap-3 overflow-hidden">
+      <span class="eyebrow jet-font">( CREDENTIALS )</span>
+      <span class="hairline"></span>
+      <span class="eyebrow jet-font" *ngIf="status === 'ready'">{{
+        pad(certificates.length)
+      }}</span>
+    </div>
+
+    <h1 class="certs-title jet-font">
+      CERTIFICATES
+    </h1>
+  </header>
+
+  <section class="certs-wall" aria-live="polite">
+    <p *ngIf="status === 'loading'" class="certs-state jet-font">
+      <span class="dot-pulse" aria-hidden="true"></span> LOADING CERTIFICATES
+    </p>
+
+    <div *ngIf="status === 'error'" class="certs-state jet-font">
+      <p>COULDN'T LOAD THE CERTIFICATES RIGHT NOW.</p>
+      <button type="button" class="state-retry" (click)="load()">
+        TRY AGAIN ↻
+      </button>
+    </div>
+
+    <p
+      *ngIf="status === 'ready' && !certificates.length"
+      class="certs-state jet-font"
+    >
+      NOTHING PINNED UP YET.
+    </p>
+
+    <article
+      *ngFor="let cert of certificates; let i = index; trackBy: trackBySlug"
+      class="cert"
+      [id]="cert.slug"
+      [class.is-target]="cert.slug === targetSlug"
+      [class.is-flipped]="i % 2 === 1"
+      [style.--i]="i"
+      [attr.aria-labelledby]="cert.slug + '-title'"
+    >
+      <div class="cert-frame-wrap">
+        <button
+          type="button"
+          class="cert-frame"
+          (click)="openLightbox(cert)"
+          [attr.aria-label]="'View ' + cert.title + ' certificate full size'"
+        >
+          <img
+            *ngIf="cert.fileUrl; else noImage"
+            [src]="image(cert, 1200)"
+            [alt]="cert.title + ' certificate issued by ' + cert.issuer"
+            decoding="async"
+          />
+          <ng-template #noImage>
+            <span class="cert-frame-empty jet-font">NO PREVIEW</span>
+          </ng-template>
+          <span class="cert-zoom jet-font" aria-hidden="true">VIEW ⤢</span>
+        </button>
+      </div>
+
+      <div class="cert-plaque">
+        <div class="cert-plaque-top jet-font">
+          <span class="cert-no">No. {{ pad(i + 1) }}</span>
+          <span *ngIf="cert.slug === targetSlug" class="cert-linked">
+            ↳ YOU WERE LINKED HERE
+          </span>
+        </div>
+
+        <p class="cert-meta jet-font">
+          <span class="cert-issuer">{{ cert.issuer }}</span>
+          <span *ngIf="cert.issuedOn" aria-hidden="true">·</span>
+          <time *ngIf="cert.issuedOn" [attr.datetime]="cert.issuedOn">{{
+            formatIssuedOn(cert.issuedOn)
+          }}</time>
+        </p>
+
+        <h2 class="cert-title jet-font" [id]="cert.slug + '-title'">
+          {{ cert.title }}
+        </h2>
+
+        <p *ngIf="cert.description" class="cert-desc exo">
+          {{ cert.description }}
+        </p>
+
+        <ul *ngIf="cert.skills.length" class="cert-skills jet-font">
+          <li *ngFor="let skill of cert.skills">{{ skill }}</li>
+        </ul>
+
+        <div class="cert-actions jet-font">
+          <a
+            *ngIf="cert.credentialUrl"
+            class="cert-verify"
+            [href]="cert.credentialUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{{ host(cert.credentialUrl) | uppercase }}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <button
+            type="button"
+            class="cert-copy"
+            (click)="copyLink(cert)"
+            [attr.aria-label]="'Copy link to ' + cert.title"
+          >
+            <ng-container *ngIf="copiedSlug !== cert.slug; else copied">
+              <span class="cert-hash">#</span>{{ cert.slug }}
+              <i class="fa-regular fa-copy" aria-hidden="true"></i>
+            </ng-container>
+            <ng-template #copied>
+              LINK COPIED <i class="fa-solid fa-check" aria-hidden="true"></i>
+            </ng-template>
+          </button>
+        </div>
+
+        <p *ngIf="cert.credentialId" class="cert-id jet-font">
+          CREDENTIAL ID <span>{{ cert.credentialId }}</span>
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <footer class="certs-foot jet-font">
+    <span>© EMMANUEL ADEYEMO</span>
+    <a routerLink="/">BACK TO PORTFOLIO <span aria-hidden="true">→</span></a>
+  </footer>
+
+  <div
+    *ngIf="lightbox"
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="lightbox.title"
+    (click)="closeLightbox()"
+  >
+    <button
+      type="button"
+      class="lightbox-close jet-font"
+      (click)="closeLightbox()"
+      aria-label="Close"
+    >
+      CLOSE ✕
+    </button>
+    <img
+      [src]="image(lightbox, 2000)"
+      [alt]="lightbox.title + ' certificate issued by ' + lightbox.issuer"
+      (click)="$event.stopPropagation()"
+    />
+    <p class="lightbox-caption jet-font" (click)="$event.stopPropagation()">
+      {{ lightbox.title }} <span>· {{ lightbox.issuer }}</span>
+    </p>
+  </div>
+</main>

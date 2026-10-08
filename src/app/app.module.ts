@@ -15,6 +15,8 @@ import { AdminComponent } from './components/admin/admin.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { ProjectUploadComponent } from './components/project-upload/project-upload.component';
+import { CertificatesComponent } from './components/certificates/certificates.component';
+import { CertificateAdminComponent } from './components/certificate-admin/certificate-admin.component';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { environment } from 'src/environments/environment.prod';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -36,6 +38,8 @@ import { HttpClientModule } from '@angular/common/http';
     AdminComponent,
     HomeComponent,
     ProjectUploadComponent,
+    CertificatesComponent,
+    CertificateAdminComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
