@@ -1,0 +1,146 @@
+:host {
+  --reveal: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+  display: block;
+}
+
+.curtain {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  background-color: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.curtain-inner {
+  @apply mx-auto flex w-full max-w-[1200px] flex-col justify-end gap-10 px-6 pb-8 pt-24 sm:gap-14 sm:px-10 sm:pb-10;
+  transform: translateY(calc((1 - var(--reveal)) * 14vh));
+  opacity: calc(0.25 + var(--reveal) * 0.75);
+}
+
+.title {
+  @apply flex flex-col uppercase;
+  font-size: clamp(3.4rem, 14vw, 11.5rem);
+  line-height: 0.95;
+}
+
+.line {
+  display: block;
+  white-space: nowrap;
+}
+
+.line-1 {
+  transform: translateX(calc((1 - var(--reveal)) * -22%));
+}
+
+.line-2 {
+  transform: translateX(calc((1 - var(--reveal)) * 22%));
+}
+
+.body {
+  @apply grid gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-end md:gap-16;
+}
+
+.lede {
+  @apply max-w-xl text-lg sm:text-xl;
+  line-height: 1.55;
+  color: rgba(46, 44, 43, 0.8);
+}
+
+.socials {
+  @apply flex flex-col;
+  border-top: 1px solid rgba(46, 44, 43, 0.16);
+}
+
+.social {
+  @apply flex items-center justify-between py-3.5 font-mono text-sm uppercase tracking-[0.2em];
+  border-bottom: 1px solid rgba(46, 44, 43, 0.16);
+  color: var(--ink);
+}
+
+.social-label {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px
+    no-repeat;
+  transition: background-size 500ms var(--spring-snappy);
+}
+
+.social-arrow {
+  display: inline-block;
+  transition: transform 600ms var(--spring-bouncy);
+}
+
+@media (hover: hover) {
+  .social:hover .social-label {
+    background-size: 100% 1px;
+  }
+
+  .social:hover .social-arrow {
+    transform: translate(3px, -3px) rotate(8deg);
+  }
+}
+
+.bottom {
+  @apply flex flex-wrap items-center justify-between gap-4 pt-6 text-[13px] font-medium;
+  border-top: 1px solid rgba(46, 44, 43, 0.16);
+  color: rgba(46, 44, 43, 0.7);
+}
+
+.meta {
+  @apply flex items-center gap-2.5 tabular-nums;
+}
+
+.meta-dot {
+  color: #c99a2e;
+}
+
+.clock {
+  @apply inline-flex items-center;
+}
+
+.clock-zone {
+  margin-left: 0.35em;
+}
+
+.clock-colon {
+  animation: blink 2s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.to-top {
+  @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-2;
+  color: var(--ink);
+  background-color: rgba(46, 44, 43, 0.06);
+  transition: background-color 150ms ease;
+}
+
+.to-top:hover {
+  background-color: rgba(46, 44, 43, 0.12);
+}
+
+.to-top-arrow {
+  display: inline-block;
+  transition: transform 600ms var(--spring-bouncy);
+}
+
+.to-top:hover .to-top-arrow {
+  transform: translateY(-3px);
+}
+
+.curtain ::selection {
+  background-color: var(--ink);
+  color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-colon {
+    animation: none;
+  }
+}

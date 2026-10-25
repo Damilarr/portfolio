@@ -1,0 +1,178 @@
+<div class="sheet">
+  <main id="top" class="page">
+    <nav class="detail-nav" aria-label="Project navigation" appReveal="0">
+      <div class="nav-group">
+        <a
+          routerLink="/"
+          class="nav-button"
+          aria-label="Home"
+          title="Home"
+          appMagnetic="0.4"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M2.5 7.2 8 2.8l5.5 4.4V13a.5.5 0 0 1-.5.5H9.5V10h-3v3.5H3a.5.5 0 0 1-.5-.5Z"
+            />
+          </svg>
+        </a>
+        <a
+          href="/#works"
+          class="nav-button"
+          aria-label="Back to works"
+          title="Back to works"
+          appMagnetic="0.4"
+          (click)="back($event)"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M13 8H3.5M7.5 4 3.5 8l4 4" />
+          </svg>
+        </a>
+      </div>
+      <span *ngIf="status === 'ready'" class="nav-count"
+        >{{ pad(index + 1) }} / {{ pad(total) }}</span
+      >
+    </nav>
+
+    <ng-container *ngIf="status === 'ready' && project as p">
+      <article class="detail">
+        <header class="detail-head" appReveal="1">
+          <div class="flex flex-col gap-1.5">
+            <h1 class="detail-title">{{ p.name }}</h1>
+            <p class="detail-sub">
+              <span class="detail-tagline">{{
+                p.detail?.tagline || kind
+              }}</span>
+              <ng-container *ngIf="p.detail?.year">
+                <span aria-hidden="true">•</span> {{ p.detail?.year }}
+              </ng-container>
+            </p>
+          </div>
+          <div class="detail-actions">
+            <a
+              *ngIf="liveLink as link"
+              class="pill pill-accent"
+              appMagnetic
+              [href]="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i [class]="link.icon" aria-hidden="true"></i>{{ liveLabel }}
+            </a>
+            <a
+              *ngIf="sourceLink as link"
+              class="pill"
+              appMagnetic
+              [href]="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i [class]="link.icon" aria-hidden="true"></i>Source
+            </a>
+          </div>
+        </header>
+
+        <div class="hero" appTilt>
+          <app-project-media
+            [project]="p"
+            [width]="1400"
+            [previewWidth]="720"
+            [style.view-transition-name]="'work-media-' + p.slug"
+          ></app-project-media>
+        </div>
+
+        <div class="intro" appReveal="2">
+          <p class="lede">{{ p.detail?.intro || p.description }}</p>
+          <dl class="facts">
+            <div>
+              <dt>Type</dt>
+              <dd>{{ kind }}</dd>
+            </div>
+            <div *ngIf="p.detail?.year">
+              <dt>Year</dt>
+              <dd>{{ p.detail?.year }}</dd>
+            </div>
+            <div *ngIf="p.techs.length">
+              <dt>Stack</dt>
+              <dd>{{ p.techs.join(', ') }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <section
+          *ngFor="let section of p.detail?.sections"
+          class="section"
+          appReveal
+        >
+          <hr *ngIf="section.heading" class="divider" />
+          <h2 *ngIf="section.heading">{{ section.heading }}</h2>
+          <p *ngFor="let paragraph of section.body">{{ paragraph }}</p>
+
+          <figure *ngIf="section.figure as figure" class="figure">
+            <div class="frame">
+              <img
+                [src]="figure.src"
+                [alt]="figure.alt"
+                loading="lazy"
+                decoding="async"
+                (load)="$any($event.target).classList.add('is-loaded')"
+              />
+            </div>
+            <figcaption *ngIf="figure.caption">{{ figure.caption }}</figcaption>
+          </figure>
+
+          <figure *ngIf="section.phones?.length" class="figure">
+            <div class="frame frame-phones">
+              <div *ngFor="let phone of section.phones" class="phone-shot">
+                <img
+                  [src]="phone.src"
+                  [alt]="phone.alt"
+                  loading="lazy"
+                  decoding="async"
+                  (load)="$any($event.target).classList.add('is-loaded')"
+                />
+              </div>
+            </div>
+            <figcaption *ngIf="section.phonesCaption">
+              {{ section.phonesCaption }}
+            </figcaption>
+          </figure>
+        </section>
+      </article>
+
+      <nav *ngIf="next" class="next" aria-label="Next project" appReveal>
+        <a class="next-card" appTilt [routerLink]="['/work', next.slug]">
+          <span class="next-text">
+            <span class="next-label">Next project</span>
+            <span class="next-name">{{ next.name }}</span>
+            <span class="next-tagline">{{
+              next.detail?.tagline || next.description
+            }}</span>
+          </span>
+          <span class="next-arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </ng-container>
+
+    <div *ngIf="status === 'loading'" class="detail-loading" aria-hidden="true">
+      <span class="skeleton w-40"></span>
+      <span class="skeleton w-64"></span>
+      <span class="skeleton-hero"></span>
+    </div>
+
+    <div *ngIf="status === 'missing'" class="detail-state" appReveal="1">
+      <h1 class="detail-title">Nothing here</h1>
+      <p>That project doesn't exist, or it has been taken down.</p>
+      <a class="pill" routerLink="/" fragment="works" appMagnetic>
+        <span aria-hidden="true">←</span> All works
+      </a>
+    </div>
+
+    <div *ngIf="status === 'error'" class="detail-state">
+      <p>Couldn't load this project right now.</p>
+      <button type="button" class="pill" appMagnetic (click)="show()">
+        Try again
+      </button>
+    </div>
+  </main>
+</div>
+<app-footer></app-footer>

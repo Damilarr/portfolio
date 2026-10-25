@@ -1,109 +1,129 @@
-/* Toast Notification Styles */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  min-width: 300px;
-  max-width: 500px;
-  padding: 16px 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  z-index: 10000;
-  animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
-  backdrop-filter: blur(10px);
+.contact-head {
+  @apply mb-6 flex flex-col gap-2;
 }
 
-.toast-success {
-  background: rgba(33, 32, 31, 0.95);
-  border: 1px solid rgba(248, 212, 122, 0.2);
-  border-left: 4px solid #f8d47a;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+.contact-title {
+  @apply text-lg font-semibold;
+  color: var(--primary);
 }
 
-.toast-error {
-  background: rgba(33, 32, 31, 0.95);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-left: 4px solid #ef4444;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+.contact-lede {
+  @apply text-[15.5px];
+  line-height: 1.7;
+  color: var(--secondary);
 }
 
-.toast-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.contact-form {
+  @apply flex flex-col gap-3;
 }
 
-.toast-icon {
-  font-size: 20px;
-  flex-shrink: 0;
+.field-row {
+  @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
 }
 
-.toast-success .toast-icon {
-  color: #f8d47a;
+.field {
+  @apply flex flex-col gap-1.5;
 }
 
-.toast-error .toast-icon {
-  color: #ef4444;
+.field-label {
+  @apply text-[13px] font-medium;
+  color: var(--secondary);
 }
 
-.toast-message {
-  color: #eeebdd;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1.5;
+.field-input {
+  @apply w-full rounded-[10px] px-3 py-2.5 text-[15px];
+  color: var(--primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease,
+    background-color 150ms ease;
 }
 
-@keyframes slideInRight {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+.field-input::placeholder {
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .field-input:hover {
+    border-color: var(--border-hi);
   }
 }
 
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(400px);
+.field-input:focus {
+  border-color: rgba(248, 212, 122, 0.55);
+  box-shadow: 0 0 0 3px rgba(248, 212, 122, 0.12);
+}
+
+.field-input.ng-invalid.ng-touched {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.field-textarea {
+  @apply resize-y;
+  min-height: 7.5rem;
+}
+
+.form-footer {
+  @apply mt-1 flex flex-wrap items-center gap-x-4 gap-y-2;
+}
+
+.send {
+  @apply grid h-9 items-center rounded-full px-4 text-[13px] font-medium;
+  color: #21201f;
+  background-color: var(--accent);
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+
+.send:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+@media (hover: hover) {
+  .send:not(:disabled):hover {
+    background-color: #fadf9b;
   }
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .toast {
-    bottom: 20px;
-    right: 20px;
-    left: 20px;
-    min-width: auto;
-    max-width: none;
-  }
+.send-label {
+  @apply inline-flex items-center justify-center gap-1.5;
+  grid-area: 1 / 1;
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateY(4px);
+  transition: opacity 250ms var(--ease-out), filter 250ms var(--ease-out),
+    transform 250ms var(--ease-out);
+}
 
-  @keyframes slideInRight {
-    from {
-      transform: translateY(100px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
+.send-label.is-shown {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
 
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(100px);
-    }
-  }
+.check {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  transition: stroke-dashoffset 450ms var(--ease-out) 150ms;
+}
+
+.is-shown .check {
+  stroke-dashoffset: 0;
+}
+
+.form-status {
+  @apply text-[13px];
+  color: var(--secondary);
+}
+
+.form-status.is-error {
+  color: #f08a7e;
 }

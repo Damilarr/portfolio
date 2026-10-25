@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NavigationHistory } from './service/navigation-history.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'portfolio';
+
+  constructor(_history: NavigationHistory) {}
 }

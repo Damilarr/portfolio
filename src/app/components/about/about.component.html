@@ -1,80 +1,61 @@
-<section
-  class="flex z-20 relative flex-col overflow-hidden"
-  id="about-section"
->
-  <div class="about-inner px-4 sm:px-6 md:px-10 lg:px-16" id="about-text">
-    <div class="flex items-baseline gap-3 overflow-hidden">
-      <span class="eyebrow jet-font">( INFO )</span>
-      <span class="hairline"></span>
-      <span class="eyebrow jet-font">FULL STACK · AI</span>
+<section class="about" aria-label="About">
+  <header class="intro" appReveal="0">
+    <app-pixel-avatar
+      art="assets/me/pixel-portrait.png"
+      photo="assets/me/portrait.jpg"
+      name="Emmanuel Adeyemo"
+      caption="Software Engineer"
+      [size]="48"
+    ></app-pixel-avatar>
+    <div class="flex flex-col gap-1">
+      <h1 class="name">Emmanuel Adeyemo</h1>
+      <p class="role">Software Engineer</p>
     </div>
+  </header>
 
-    <h2 class="about-title jet-font" id="about-title">ABOUT</h2>
-
-    <div class="about-grid">
-      <p class="about-desc exo" id="about-description">
-        Hi again 👋🏾, I'm Emmanuel. I started as a frontend developer and now
-        work across the full stack. Recently I've built a voice agent that
-        handles client intake over the web and phone calls (LiveKit, OpenAI
-        Realtime), and a FastAPI chatbot that qualifies sales leads. I've also
-        worked on deployment setups with Docker, GitHub Actions and ArgoCD on
-        GCP.
-      </p>
-
-      <dl class="about-stack jet-font" id="about-stack">
-        <div class="stack-row" *ngFor="let group of stackGroups; let i = index">
-          <dt>
-            <span class="stack-index">{{ pad(i + 1) }}</span>
-            {{ group.label }}
-          </dt>
-          <dd>
-            <span *ngFor="let item of group.items">{{ item }}</span>
-          </dd>
-        </div>
-      </dl>
-    </div>
+  <div class="bio" appReveal="1">
+    <p>
+      I'm a <span class="em">full-stack software engineer</span>. I started as a
+      frontend developer and now build web apps with React, Angular and Next.js,
+      and backends with Django, FastAPI and Node.js.
+    </p>
+    <p>
+      Lately a lot of my work has been on
+      <span class="em"
+        >AI features, mostly voice agents and LLM integrations</span
+      >. Recently I've built a voice agent that handles client intake over the
+      web and phone calls (LiveKit, OpenAI Realtime), and a FastAPI chatbot that
+      qualifies sales leads.
+    </p>
+    <p>
+      I've also worked on deployment setups with Docker, GitHub Actions and
+      ArgoCD on GCP.
+    </p>
   </div>
 
-  <div
-    class="flex flex-col w-full flex-1 justify-center overflow-hidden"
-    id="tech-section"
-  >
-    <div
-      class="w-full overflow-hidden relative py-5 bg-[#2a2928]"
-      id="marquee-wrapper"
+  <dl class="stack" appReveal="2">
+    <div class="stack-row" *ngFor="let group of stackGroups">
+      <dt>{{ group.label }}</dt>
+      <dd>{{ group.items.join(', ') }}</dd>
+    </div>
+  </dl>
+
+  <nav class="links" aria-label="Elsewhere" appReveal="3">
+    <a class="pill" href="#contact" appMagnetic>
+      <i class="fa-solid fa-envelope" aria-hidden="true"></i>Contact
+    </a>
+    <a
+      *ngFor="let social of socials"
+      class="pill"
+      appMagnetic
+      [href]="social.href"
+      target="_blank"
+      rel="noopener noreferrer"
     >
-      <div
-        class="flex gap-4 items-center w-fit will-change-transform"
-        id="marquee-content"
-      >
-        <!-- First set of pills -->
-        <ng-container *ngFor="let tech of techStack; let i = index">
-          <div class="flex-shrink-0 whitespace-nowrap techs tech-pill">
-            <i *ngIf="tech.iconClass" [class]="tech.iconClass"></i>
-            <img
-              *ngIf="tech.imgSrc"
-              [src]="tech.imgSrc"
-              class="h-5 w-5"
-              [alt]="tech.name"
-            />
-            <h3>{{ tech.name }}</h3>
-          </div>
-        </ng-container>
-
-        <!-- Duplicate set for seamless loop -->
-        <ng-container *ngFor="let tech of techStack; let i = index">
-          <div class="flex-shrink-0 whitespace-nowrap techs tech-pill">
-            <i *ngIf="tech.iconClass" [class]="tech.iconClass"></i>
-            <img
-              *ngIf="tech.imgSrc"
-              [src]="tech.imgSrc"
-              class="h-5 w-5"
-              [alt]="tech.name"
-            />
-            <h3>{{ tech.name }}</h3>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-  </div>
+      <i [class]="social.icon" aria-hidden="true"></i>{{ social.label }}
+    </a>
+    <a class="pill" routerLink="/certificates" appMagnetic>
+      <i class="fa-solid fa-award" aria-hidden="true"></i>Certificates
+    </a>
+  </nav>
 </section>

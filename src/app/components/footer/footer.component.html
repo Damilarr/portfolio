@@ -1,40 +1,53 @@
-<section
-  class="bg-[#EEEBDD] px-2 py-3 z-10 h-screen bottom-0 sm:py-5 sm:px-6 border-0 outline-none flex flex-col"
->
-  <div
-    class="flex flex-col pb-10 fixed bottom-full sm:px-4 justify-between items-start w-full"
-  >
-    <div
-      class="flex fixed flex-col-reverse sm:flex-row py-6 sm:py-9 md:py-12 items-start justify-between w-full"
-    >
-      <div class="w-full sm:bottom-3/4 sm:w-3/4 sm:px-2">
-        <div
-          class="text-[#2E2C2B] fixed bottom-2/4 blanka text-6xl sm:text-7xl md:text-9xl"
+<footer class="curtain">
+  <div class="curtain-inner">
+    <h2 class="title blanka">
+      <span class="sr-only">Connect and collab</span>
+      <span class="line line-1" aria-hidden="true">Connect</span>
+      <span class="line line-2" aria-hidden="true">&amp; Collab</span>
+    </h2>
+
+    <div class="body">
+      <p class="lede">
+        I'm always looking for new ways to connect and collaborate. If you have
+        a project you'd like to discuss, want to share your work, or just want
+        to say hello, I'd love to hear it!
+      </p>
+
+      <nav class="socials" aria-label="Find me elsewhere">
+        <a
+          *ngFor="let social of socials"
+          class="social"
+          appMagnetic="0.25"
+          [href]="social.href"
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          <p>CONNECT</p>
-          <span>&amp; COLLAB</span>
-        </div>
-      </div>
+          <span class="social-label">{{ social.label }}</span>
+          <span class="social-arrow" aria-hidden="true">↗</span>
+        </a>
+      </nav>
     </div>
-    <p
-      class="px-2 fixed bottom-1/4 pt-4 gsansr text-lg sm:text-xl md:text-2xl xl:w-1/2 sm:w-3/4 text-justify text-[#2e2c2b]"
-    >
-      I'm always looking for new ways to connect and collaborate. If you have a
-      project you'd like to discuss, want to share your work, or just want to
-      say hello, I'd love to hear it!
-    </p>
-  </div>
-  <div
-    class="flex items-center justify-around space-x-2 relative overflow-hidden py-8 sm:py-5"
-  >
-    <div
-      class="fixed text-base jet-font bottom-10 underline underline-offset-8 flex justify-around w-5/6 sm:w-full"
-      data-aos="fade-up"
-    >
-      <a href="https://twitter.com/Emmdam4">TWITTER</a>
-      <a href="https://www.linkedin.com/in/adeyemo-emmanuel">LINKEDIN</a>
-      <a href="https://github.com/Damilarr">GITHUB</a>
-      <a href="#">DISCORD</a>
+
+    <div class="bottom">
+      <p class="meta">
+        <span>© {{ year }}</span>
+        <span class="meta-dot" aria-hidden="true">•</span>
+        <span class="clock">
+          <app-rolling-number
+            [value]="hours"
+            [minDigits]="2"
+          ></app-rolling-number
+          ><span class="clock-colon" aria-hidden="true">:</span
+          ><app-rolling-number
+            [value]="minutes"
+            [minDigits]="2"
+          ></app-rolling-number
+          ><span class="clock-zone">WAT</span>
+        </span>
+      </p>
+      <a href="#top" class="to-top" appMagnetic="0.4">
+        Back to top <span class="to-top-arrow" aria-hidden="true">↑</span>
+      </a>
     </div>
   </div>
-</section>
+</footer>

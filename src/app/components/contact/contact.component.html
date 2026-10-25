@@ -1,86 +1,88 @@
-<section
-  class="flex z-20 relative rounded-b-[3rem] space-y-4 md:space-y-0 md:flex-row justify-center md:items-start items-center py-16 px-4 sm:px-6 md:px-10 lg:px-16 flex-col bg-clip-border"
->
-  <div class="flex flex-col space-y-2 md:w-1/2 p-6">
-    <h2
-      class="header mb-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
-    >
-      LET's TALK
-    </h2>
-    <p class="text-whitish text-xl exo">
-      Reach out to discuss a project, ask a question, get some feedback or to
-      just setup a time to hang out. 👋
+<section aria-labelledby="contact-title">
+  <div class="contact-head" appReveal="0">
+    <h2 id="contact-title" class="contact-title">Contact</h2>
+    <p class="contact-lede">
+      Reach out to discuss a project, ask a question, get some feedback or just
+      to set up a time to hang out.
     </p>
   </div>
-  <div class="w-full md:max-w-full md:w-1/2 mx-auto">
-    <div class="p-6 sm:rounded-md">
-      <form [formGroup]="contactInfo" (ngSubmit)="onSubmit()" method="POST">
-        <label class="block mb-6">
-          <span class="header">Your name</span>
-          <input
-            type="text"
-            name="name"
-            formControlName="name"
-            class="inputt"
-            placeholder="Joe Briggs"
-            required
-          />
-        </label>
-        <label class="block mb-6">
-          <span class="header">Email address</span>
-          <input
-            name="email"
-            type="email"
-            class="inputt"
-            formControlName="email"
-            placeholder="joe.bloggs@example.com"
-            required
-          />
-        </label>
-        <label class="block mb-6">
-          <span class="header">Message</span>
-          <textarea
-            name="message"
-            class="inputt"
-            formControlName="message"
-            rows="3"
-            placeholder="Tell us what you're thinking about..."
-            required
-          ></textarea>
-        </label>
-        <div class="mb-6 items-center justify-between flex">
-          <button
-            type="submit"
-            [disabled]="submitting"
-            class="h-10 px-5 text-black bg-yelloww rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-whitish"
-          >
-            {{ submitting ? "SENDING..." : "SUBMIT" }}
-          </button>
-          <p class="text-whitish text-base sm:text-lg">
-            ALL FIELDS ARE REQUIRED
-          </p>
-        </div>
-      </form>
-    </div>
-  </div>
 
-  <!-- Toast Notification -->
-  <div
-    *ngIf="showToast"
-    [class.toast-success]="toastType === 'success'"
-    [class.toast-error]="toastType === 'error'"
-    class="toast"
+  <form
+    class="contact-form"
+    [formGroup]="contactInfo"
+    (ngSubmit)="onSubmit()"
+    method="POST"
+    novalidate
+    appReveal="1"
   >
-    <div class="toast-content">
-      <i
-        [class]="
-          toastType === 'success'
-            ? 'fa-solid fa-check-circle'
-            : 'fa-solid fa-exclamation-circle'
-        "
-        class="toast-icon"
-      ></i>
-      <span class="toast-message">{{ toastMessage }}</span>
+    <div class="field-row">
+      <label class="field">
+        <span class="field-label">Name</span>
+        <input
+          type="text"
+          name="name"
+          formControlName="name"
+          class="field-input"
+          placeholder="Joe Briggs"
+          autocomplete="name"
+          required
+        />
+      </label>
+      <label class="field">
+        <span class="field-label">Email</span>
+        <input
+          name="email"
+          type="email"
+          class="field-input"
+          formControlName="email"
+          placeholder="joe.briggs@example.com"
+          autocomplete="email"
+          required
+        />
+      </label>
     </div>
-  </div>
+    <label class="field">
+      <span class="field-label">Message</span>
+      <textarea
+        name="message"
+        class="field-input field-textarea"
+        formControlName="message"
+        rows="4"
+        placeholder="Tell me what you're thinking about..."
+        required
+      ></textarea>
+    </label>
+
+    <div class="form-footer">
+      <button
+        type="submit"
+        class="send"
+        appMagnetic="0.2"
+        [disabled]="submitting"
+      >
+        <span class="send-label" [class.is-shown]="status !== 'success'">{{
+          submitting ? 'Sending...' : 'Send message'
+        }}</span>
+        <span
+          class="send-label"
+          [class.is-shown]="status === 'success'"
+          aria-hidden="true"
+        >
+          <svg class="check" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+          </svg>
+          Sent
+        </span>
+      </button>
+
+      <p
+        class="form-status"
+        [class.is-error]="status === 'error'"
+        role="status"
+        aria-live="polite"
+      >
+        {{ statusMessage }}
+      </p>
+    </div>
+  </form>
 </section>

@@ -1,3 +1,5 @@
+import { isCloudinaryUrl, withCloudinaryTransform } from '../utils/cloudinary-url';
+
 export interface Certificate {
   id?: string;
   /** Stable anchor used in public links, e.g. /certificates#intro-to-modern-ai */
@@ -68,14 +70,11 @@ export function compareCertificates(a: Certificate, b: Certificate): number {
  * Cloudinary can rasterise the first page of a PDF, so PDFs and images render the same way.
  */
 export function certificateImage(fileUrl: string, width: number): string {
-  const marker = '/image/upload/';
-  if (!fileUrl || !fileUrl.includes('res.cloudinary.com') || !fileUrl.includes(marker)) {
-    return fileUrl;
-  }
+  if (!isCloudinaryUrl(fileUrl)) return fileUrl;
   const isPdf = /\.pdf$/i.test(fileUrl);
   const transform = isPdf
     ? `pg_1,q_auto,w_${width}`
     : `f_auto,q_auto,w_${width},c_limit`;
-  const url = fileUrl.replace(marker, `${marker}${transform}/`);
+  const url = withCloudinaryTransform(fileUrl, transform);
   return isPdf ? url.replace(/\.pdf$/i, '.jpg') : url;
 }

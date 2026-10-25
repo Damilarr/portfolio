@@ -1,0 +1,33 @@
+:host {
+  display: inline-flex;
+}
+
+.digits {
+  display: inline-flex;
+}
+
+.digit {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--value) * -1em));
+  transition: transform 850ms var(--spring-bouncy);
+  transition-delay: calc(var(--i) * 60ms);
+}
+
+.strip span {
+  height: 1em;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strip {
+    transition: none;
+  }
+}
