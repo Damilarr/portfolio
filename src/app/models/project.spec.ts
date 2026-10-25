@@ -139,12 +139,12 @@ describe('displayUrl', () => {
 });
 
 describe('arrangeProjects', () => {
-  it('puts the newest first, with fresh admin additions ahead of everything', () => {
+  it('puts the newest first, with projects that have no year ahead of everything', () => {
     const projects = arrangeProjects([
-      toProject('1jReCD1XgLSu4eroQVdS', { projectName: 'plex' })!,
-      toProject('8wztWf0Rhdsdnt3a3scj', { projectName: 'Heartnote' })!,
-      toProject('brand-new', { projectName: 'Fresh' })!,
-      toProject('orMzf99XXvz2asWvYN8g', { projectName: 'XSplit' })!,
+      toProject('a', { projectName: 'plex', year: '2022' })!,
+      toProject('b', { projectName: 'Heartnote', year: '2026' })!,
+      toProject('c', { projectName: 'Fresh' })!,
+      toProject('d', { projectName: 'XSplit', year: '2025' })!,
     ]);
     expect(projects.map((p) => p.name)).toEqual([
       'Fresh',
@@ -152,16 +152,6 @@ describe('arrangeProjects', () => {
       'XSplit',
       'plex',
     ]);
-  });
-
-  it('attaches the write-up and slugs the name for the page URL', () => {
-    const [project] = arrangeProjects([
-      toProject('WM3Agwj19cJnGCQexeQt', { projectName: 'JOB-AGENT BOT' })!,
-    ]);
-    expect(project.slug).toBe('job-agent-bot');
-    expect(project.detail?.tagline).toBe(
-      'An AI agent for job applications, on Telegram'
-    );
   });
 
   it('keeps slugs unique when names collide', () => {
@@ -173,5 +163,66 @@ describe('arrangeProjects', () => {
       'portfolio',
       'portfolio-2',
     ]);
+  });
+});
+
+describe('project write-ups', () => {
+  it('reads the write-up from the document and slugs the name', () => {
+    const project = toProject('id', {
+      projectName: 'JOB-AGENT BOT',
+      tagline: ' An AI agent for job applications ',
+      year: '2026',
+      intro: 'Applying for jobs gets repetitive fast.',
+      sections: [
+        {
+          heading: 'Google Forms too',
+          body: ['It fills those in.', '  '],
+          figure: {
+            src: 'https://example.com/a.png',
+            alt: 'A form',
+            caption: '',
+          },
+          phones: [
+            { src: '', alt: 'empty' },
+            { src: 'https://example.com/b.png', alt: 'B' },
+          ],
+          phonesCaption: 'On a phone',
+        },
+      ],
+    })!;
+    expect(project.slug).toBe('job-agent-bot');
+    expect(project.detail).toEqual({
+      tagline: 'An AI agent for job applications',
+      year: '2026',
+      intro: 'Applying for jobs gets repetitive fast.',
+      sections: [
+        {
+          heading: 'Google Forms too',
+          body: ['It fills those in.'],
+          figure: {
+            src: 'https://example.com/a.png',
+            alt: 'A form',
+            caption: '',
+          },
+          phones: [{ src: 'https://example.com/b.png', alt: 'B', caption: '' }],
+          phonesCaption: 'On a phone',
+        },
+      ],
+    });
+  });
+
+  it('drops sections with nothing in them', () => {
+    const project = toProject('id', {
+      projectName: 'X',
+      intro: 'Hi',
+      sections: [{ heading: ' ', body: [], phones: [] }, null],
+    })!;
+    expect(project.detail?.sections).toEqual([]);
+  });
+
+  it('has no write-up when none of the fields are filled in', () => {
+    expect(
+      toProject('id', { projectName: 'X', sections: [] })!.detail
+    ).toBeUndefined();
   });
 });

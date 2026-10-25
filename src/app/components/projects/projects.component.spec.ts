@@ -19,8 +19,10 @@ describe('ProjectsComponent', () => {
   const PIXEL =
     'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=';
 
-  const web = toProject('yZM4lspmg1aM4EHFAOlO', {
+  const web = toProject('moodai', {
     projectName: 'MoodAI',
+    tagline: 'A journal that reads the mood of every entry',
+    year: '2024',
     category: 'web',
     img: PIXEL,
     projectLink: 'https://mooddai.vercel.app',
@@ -122,19 +124,12 @@ describe('ProjectsComponent', () => {
     expect(mobileCard.querySelector('.kind')!.textContent!.trim()).toBe('iOS');
   });
 
-  it('falls back to the local cover, then to the name, when images fail', () => {
+  it('shows the name instead of a broken cover', () => {
     create([web]);
-    const fail = () => {
-      el.querySelector<HTMLImageElement>('.img-full')!.dispatchEvent(
-        new Event('error')
-      );
-      fixture.detectChanges();
-    };
-    fail();
-    expect(el.querySelector<HTMLImageElement>('.img-full')!.src).toContain(
-      'assets/work/moodai/cover.webp'
+    el.querySelector<HTMLImageElement>('.img-full')!.dispatchEvent(
+      new Event('error')
     );
-    fail();
+    fixture.detectChanges();
     expect(el.querySelector('.shot')).toBeNull();
     expect(el.querySelector('.fallback')!.textContent!.trim()).toBe('MoodAI');
   });

@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Project, ProjectLink } from 'src/app/models/project';
+import { Project, ProjectLink, projectImage } from 'src/app/models/project';
 import { NavigationHistory } from 'src/app/service/navigation-history.service';
 import { ProjectService } from 'src/app/service/project.service';
 
@@ -94,6 +94,10 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     return platforms.length
       ? `Mobile app · ${platforms.join(' & ')}`
       : 'Mobile app';
+  }
+
+  image(src: string, width: number): string {
+    return projectImage(src, width);
   }
 
   pad(value: number): string {

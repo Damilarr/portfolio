@@ -17,8 +17,6 @@
   max-width: 1440px;
 }
 
-/* ------------------------------------------------------------------ head */
-
 .certs-head {
   @apply pb-10 pt-6 md:pb-16 md:pt-10;
 }
@@ -58,8 +56,6 @@
   letter-spacing: -0.05em;
 }
 
-/* ---------------------------------------------------------------- states */
-
 .certs-state {
   @apply flex flex-col items-start gap-4 py-24 text-xs tracking-[0.3em];
   color: var(--muted);
@@ -79,8 +75,6 @@
   background: var(--accent);
   animation: pulse 1.2s ease-in-out infinite;
 }
-
-/* ------------------------------------------------------------------ wall */
 
 .certs-wall {
   @apply flex flex-col;
@@ -111,13 +105,10 @@
   }
 }
 
-/* -------------------------------------------------------- framed artwork */
-
 .cert-frame-wrap {
   perspective: 1400px;
 }
 
-/* A paper mat, hung slightly off-level; it settles straight when you look at it. */
 .cert-frame {
   @apply relative block w-full;
   padding: clamp(10px, 2.2vw, 22px);
@@ -147,7 +138,6 @@
   outline-offset: 6px;
 }
 
-/* Certificates come in different shapes, so the image keeps its own proportions. */
 .cert-frame img {
   display: block;
   width: 100%;
@@ -176,8 +166,6 @@
   opacity: 1;
   transform: translateY(0);
 }
-
-/* ---------------------------------------------------------------- plaque */
 
 .cert-plaque {
   @apply relative flex flex-col;
@@ -282,8 +270,6 @@
   color: var(--muted);
 }
 
-/* ---------------------------------------------------------------- footer */
-
 .certs-foot {
   @apply mt-auto flex flex-wrap items-center justify-between gap-4 py-10 text-[10px] tracking-[0.3em] sm:text-xs;
   color: var(--muted);
@@ -296,8 +282,6 @@
 .certs-foot a:hover {
   color: var(--accent);
 }
-
-/* -------------------------------------------------------------- lightbox */
 
 .lightbox {
   @apply fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 p-4 sm:p-10;
@@ -330,8 +314,6 @@
 .lightbox-caption span {
   color: var(--muted);
 }
-
-/* ------------------------------------------------------------ keyframes */
 
 @keyframes rise {
   from {

@@ -19,14 +19,32 @@ describe('ProjectDetailComponent', () => {
   let cameFromHome: boolean;
 
   const projects = arrangeProjects([
-    toProject('8wztWf0Rhdsdnt3a3scj', {
+    toProject('heartnote', {
       projectName: 'Heartnote',
+      tagline: 'Handcrafted digital letters',
+      year: '2026',
+      intro:
+        'Heartnote is for the moments when a text message feels too small.',
+      sections: [
+        { heading: 'Making it yours', body: ['You pick the paper.'] },
+        {
+          heading: 'Going Pro',
+          body: ['Pro lets you download your letters.'],
+          figure: {
+            src: 'https://example.com/pro.png',
+            alt: 'Pro',
+            caption: '',
+          },
+        },
+        { heading: '', body: [], phones: [] },
+      ],
       projectLink: 'https://sendheartnote.com',
       githubLink: 'https://github.com/Damilarr/heartnote',
       techs: ['Nextjs', 'Prisma'],
     })!,
-    toProject('1jReCD1XgLSu4eroQVdS', {
+    toProject('plex', {
       projectName: 'plex ',
+      year: '2022',
       projectDesc: 'A movie website.',
       projectLink: 'https://plex-clone.vercel.app',
     })!,

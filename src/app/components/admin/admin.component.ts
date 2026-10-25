@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Firestore, addDoc, collection } from '@angular/fire/firestore';
+import { Component } from '@angular/core';
 import { signInWithEmailAndPassword, Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/service/auth.service';
 import { Router } from '@angular/router';
@@ -9,27 +8,38 @@ import { Router } from '@angular/router';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent {
+  signingIn = false;
+  error = '';
+
   constructor(
     private auth: Auth,
     private authService: AuthService,
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
-  submit(value: any) {
-    console.log(value);
-    signInWithEmailAndPassword(this.auth, value.email, value.password)
-      .then((response: any) => {
-        if (response.user.accessToken) {
-          this.authService.login();
-          setTimeout(() => {
-            this.router.navigate(['upload']);
-          }, 2000);
-        }
-      })
-      .catch((err) => {
-        alert(err.message);
-      });
+  async submit(value: { email: string; password: string }): Promise<void> {
+    this.error = '';
+    this.signingIn = true;
+    try {
+      const response = await signInWithEmailAndPassword(
+        this.auth,
+        value.email,
+        value.password
+      );
+      if (response.user) {
+        this.authService.login();
+        await this.router.navigate(['upload']);
+      }
+    } catch (err: any) {
+      this.error =
+        err?.code === 'auth/invalid-credential' ||
+        err?.code === 'auth/wrong-password' ||
+        err?.code === 'auth/user-not-found'
+          ? 'That email and password don’t match.'
+          : err?.message || 'Couldn’t sign in. Try again.';
+    } finally {
+      this.signingIn = false;
+    }
   }
 }

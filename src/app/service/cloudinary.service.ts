@@ -3,9 +3,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
 
 export interface UploadState {
-  /** 0 to 100 */
   progress: number;
-  /** Set once the upload has finished */
   url?: string;
 }
 
@@ -15,7 +13,6 @@ export interface UploadState {
 export class CloudinaryService {
   constructor(private zone: NgZone) {}
 
-  /** Uploads a file with the unsigned preset and reports progress until the URL is known. */
   upload(file: File, folder: string): Observable<UploadState> {
     return new Observable<UploadState>((subscriber) => {
       const formData = new FormData();

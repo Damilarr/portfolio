@@ -1,4 +1,3 @@
-import { PROJECT_DETAILS, ProjectDetail } from '../content/project-details';
 import {
   isCloudinaryUrl,
   withCloudinaryTransform,
@@ -10,6 +9,27 @@ export interface ProjectLink {
   label: string;
   href: string;
   icon: string;
+}
+
+export interface Figure {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export interface DetailSection {
+  heading?: string;
+  body: string[];
+  figure?: Figure;
+  phones?: Figure[];
+  phonesCaption?: string;
+}
+
+export interface ProjectDetail {
+  tagline: string;
+  year: string;
+  intro: string;
+  sections: DetailSection[];
 }
 
 export interface Project {
@@ -42,8 +62,51 @@ export function toProject(id: string, doc: any): Project | null {
     techs: (doc.techs || []).filter(Boolean).map(techLabel),
     platforms: doc.platforms || [],
     links: buildLinks(doc),
-    detail: PROJECT_DETAILS[id],
+    detail: readDetail(doc),
   };
+}
+
+function readDetail(doc: any): ProjectDetail | undefined {
+  const text = (value: any) => (typeof value === 'string' ? value.trim() : '');
+  const figure = (value: any): Figure | undefined =>
+    value && text(value.src)
+      ? {
+          src: text(value.src),
+          alt: text(value.alt),
+          caption: text(value.caption),
+        }
+      : undefined;
+  const sections: DetailSection[] = (
+    Array.isArray(doc.sections) ? doc.sections : []
+  )
+    .map((section: any) => ({
+      heading: text(section?.heading),
+      body: (Array.isArray(section?.body) ? section.body : [])
+        .map(text)
+        .filter(Boolean),
+      figure: figure(section?.figure),
+      phones: (Array.isArray(section?.phones) ? section.phones : [])
+        .map(figure)
+        .filter((phone: Figure | undefined): phone is Figure => !!phone),
+      phonesCaption: text(section?.phonesCaption),
+    }))
+    .filter(
+      (section: DetailSection) =>
+        section.heading ||
+        section.body.length ||
+        section.figure ||
+        section.phones?.length
+    );
+
+  const detail: ProjectDetail = {
+    tagline: text(doc.tagline),
+    year: text(doc.year),
+    intro: text(doc.intro),
+    sections,
+  };
+  const hasContent =
+    detail.tagline || detail.year || detail.intro || sections.length;
+  return hasContent ? detail : undefined;
 }
 
 export function arrangeProjects(projects: Project[]): Project[] {

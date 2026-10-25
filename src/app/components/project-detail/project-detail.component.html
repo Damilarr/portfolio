@@ -110,7 +110,7 @@
           <figure *ngIf="section.figure as figure" class="figure">
             <div class="frame">
               <img
-                [src]="figure.src"
+                [src]="image(figure.src, 1600)"
                 [alt]="figure.alt"
                 loading="lazy"
                 decoding="async"
@@ -124,7 +124,7 @@
             <div class="frame frame-phones">
               <div *ngFor="let phone of section.phones" class="phone-shot">
                 <img
-                  [src]="phone.src"
+                  [src]="image(phone.src, 600)"
                   [alt]="phone.alt"
                   loading="lazy"
                   decoding="async"

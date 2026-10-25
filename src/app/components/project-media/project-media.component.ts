@@ -21,8 +21,8 @@ export class ProjectMediaComponent {
   failed = new Set<string>();
 
   get cover(): string | null {
-    const candidates = [this.project.cover, this.project.detail?.fallbackCover];
-    return candidates.find((url) => !!url && !this.failed.has(url)) || null;
+    const cover = this.project.cover;
+    return cover && !this.failed.has(cover) ? cover : null;
   }
 
   get phoneScreens(): string[] {

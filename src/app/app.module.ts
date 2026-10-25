@@ -15,6 +15,7 @@ import { ProjectUploadComponent } from './components/project-upload/project-uplo
 import { CertificatesComponent } from './components/certificates/certificates.component';
 import { CertificateAdminComponent } from './components/certificate-admin/certificate-admin.component';
 import { PixelAvatarComponent } from './components/pixel-avatar/pixel-avatar.component';
+import { ImageFieldComponent } from './components/image-field/image-field.component';
 import { ProjectDetailComponent } from './components/project-detail/project-detail.component';
 import { ProjectMediaComponent } from './components/project-media/project-media.component';
 import { RollingNumberComponent } from './components/rolling-number/rolling-number.component';
@@ -44,6 +45,7 @@ import { AppViewportScroller } from './motion/viewport-scroller';
     CertificatesComponent,
     CertificateAdminComponent,
     PixelAvatarComponent,
+    ImageFieldComponent,
     ProjectDetailComponent,
     ProjectMediaComponent,
     RollingNumberComponent,
