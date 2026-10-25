@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { MagneticDirective } from 'src/app/directives/magnetic.directive';
 import { RevealDirective } from 'src/app/directives/reveal.directive';
 import { PixelAvatarComponent } from '../pixel-avatar/pixel-avatar.component';
@@ -18,7 +17,6 @@ describe('AboutComponent', () => {
         RevealDirective,
         MagneticDirective,
       ],
-      imports: [RouterTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AboutComponent);
@@ -50,7 +48,7 @@ describe('AboutComponent', () => {
     expect(el.querySelector('[role="dialog"]')).toBeNull();
   });
 
-  it('links out to every profile in a new tab, and to the certificates page in place', () => {
+  it('links out to every profile in a new tab', () => {
     const links = Array.from(
       el.querySelectorAll<HTMLAnchorElement>('.links a')
     );
@@ -59,11 +57,9 @@ describe('AboutComponent', () => {
       'GitHub',
       'LinkedIn',
       'Twitter',
-      'Certificates',
     ]);
     links
       .filter((a) => a.href.startsWith('https://'))
       .forEach((a) => expect(a.rel).toBe('noopener noreferrer'));
-    expect(links[4].getAttribute('href')).toBe('/certificates');
   });
 });
