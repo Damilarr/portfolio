@@ -1,0 +1,63 @@
+<ng-container *ngIf="cover as url; else noMedia">
+  <div *ngIf="project.category === 'web'" class="shot">
+    <ng-container
+      *ngTemplateOutlet="
+        picture;
+        context: { url: url, width: width, preview: previewWidth }
+      "
+    ></ng-container>
+  </div>
+
+  <div *ngIf="project.category === 'mobile'" class="phones">
+    <div
+      *ngFor="let screen of phoneScreens; let s = index"
+      [class]="'phone phone-' + s"
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          picture;
+          context: { url: screen, width: phoneWidth, preview: phonePreview }
+        "
+      ></ng-container>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #noMedia>
+  <span class="fallback blanka" aria-hidden="true">{{ project.name }}</span>
+</ng-template>
+
+<span class="glare" aria-hidden="true"></span>
+
+<ng-template #picture let-url="url" let-width="width" let-preview="preview">
+  <ng-container *ngIf="image(url, width) as src">
+    <img
+      *ngIf="!isShown(src) && placeholder(url) as lqip"
+      class="img-placeholder"
+      [src]="lqip"
+      alt=""
+      aria-hidden="true"
+    />
+    <ng-container *ngIf="preview && image(url, preview) as previewSrc">
+      <img
+        *ngIf="!isShown(src)"
+        class="img-full img-preview"
+        [class.is-loaded]="isShown(previewSrc)"
+        [src]="previewSrc"
+        alt=""
+        aria-hidden="true"
+        (load)="markShown(previewSrc)"
+      />
+    </ng-container>
+    <img
+      class="img-full"
+      [class.is-loaded]="isShown(src)"
+      [attr.loading]="isShown(src) ? 'eager' : 'lazy'"
+      [attr.decoding]="isShown(src) ? 'sync' : 'async'"
+      [src]="src"
+      alt=""
+      (load)="markShown(src)"
+      (error)="failed.add(url)"
+    />
+  </ng-container>
+</ng-template>

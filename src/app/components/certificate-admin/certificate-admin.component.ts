@@ -48,9 +48,7 @@ export class CertificateAdminComponent implements OnInit, OnDestroy {
   loading = false;
 
   form: CertificateForm = emptyForm();
-  /** Certificate being edited, or null when adding a new one */
   editing: Certificate | null = null;
-  /** Once the slug is typed by hand, stop deriving it from the title */
   slugTouched = false;
 
   uploadProgress = 0;
@@ -137,7 +135,6 @@ export class CertificateAdminComponent implements OnInit, OnDestroy {
       });
   }
 
-  /** Returns a reason the form can't be saved yet, or an empty string. */
   validate(): string {
     const f = this.form;
     if (!f.title.trim()) return 'Add a title.';

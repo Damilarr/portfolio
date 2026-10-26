@@ -1,0 +1,96 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+.avatar {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--border);
+  cursor: zoom-in;
+  will-change: transform;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.lightbox {
+  --open: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  cursor: zoom-out;
+}
+
+.lightbox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(21, 20, 19, 0.72);
+  backdrop-filter: blur(calc(var(--open) * 10px));
+  -webkit-backdrop-filter: blur(calc(var(--open) * 10px));
+  opacity: var(--open);
+}
+
+.card {
+  position: relative;
+  width: min(22rem, 78vw);
+  overflow: hidden;
+  background: var(--accent);
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(238, 235, 221, 0.08);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.card canvas {
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.caption {
+  @apply flex items-baseline justify-between gap-3 px-4 py-3 text-sm;
+  background: var(--bg);
+  opacity: var(--open);
+}
+
+.caption-name {
+  @apply font-medium;
+  color: var(--primary);
+}
+
+.caption-role {
+  color: var(--secondary);
+}
+
+.close {
+  @apply absolute grid h-9 w-9 place-items-center rounded-full;
+  top: 1.25rem;
+  right: 1.25rem;
+  color: var(--primary);
+  background: var(--surface);
+  opacity: var(--open);
+  transition: background-color 150ms ease;
+}
+
+.close:hover {
+  background: var(--surface-hi);
+}
+
+.close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}

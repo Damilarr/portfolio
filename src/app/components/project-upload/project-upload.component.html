@@ -1,666 +1,615 @@
-<section class="flex flex-col min-h-screen bg-[#111827] p-4 sm:p-8">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-white mb-2">Portfolio Admin</h1>
-    <p class="text-gray-400">Upload and manage projects and certificates</p>
-  </div>
+<div class="a-page">
+  <div class="a-wrap">
+    <header class="head">
+      <div>
+        <h1 class="title">Admin</h1>
+        <p class="subtitle">Projects and certificates on damilarr.dev</p>
+      </div>
+      <a class="a-btn" href="/" target="_blank" rel="noopener">
+        View site <span aria-hidden="true">↗</span>
+      </a>
+    </header>
 
-  <!-- Tabs -->
-  <div class="flex gap-4 mb-6 border-b border-gray-700">
-    <button
-      (click)="setActiveTab('upload')"
-      [class.active-admin-tab]="activeTab === 'upload'"
-      [class.inactive-admin-tab]="activeTab !== 'upload'"
-      class="admin-tab-button"
-    >
-      <i class="fa-solid fa-upload mr-2"></i>
-      Upload Project
-    </button>
-    <button
-      (click)="setActiveTab('manage')"
-      [class.active-admin-tab]="activeTab === 'manage'"
-      [class.inactive-admin-tab]="activeTab !== 'manage'"
-      class="admin-tab-button"
-    >
-      <i class="fa-solid fa-list mr-2"></i>
-      Manage Projects
-    </button>
-    <button
-      (click)="setActiveTab('certificates')"
-      [class.active-admin-tab]="activeTab === 'certificates'"
-      [class.inactive-admin-tab]="activeTab !== 'certificates'"
-      class="admin-tab-button"
-    >
-      <i class="fa-solid fa-award mr-2"></i>
-      Certificates
-    </button>
-  </div>
+    <nav class="a-segmented mb-8" aria-label="Sections">
+      <button
+        type="button"
+        [class.is-active]="tab === 'projects'"
+        [attr.aria-pressed]="tab === 'projects'"
+        (click)="tab = 'projects'"
+      >
+        Projects
+      </button>
+      <button
+        type="button"
+        [class.is-active]="tab === 'certificates'"
+        [attr.aria-pressed]="tab === 'certificates'"
+        (click)="tab = 'certificates'"
+      >
+        Certificates
+      </button>
+    </nav>
 
-  <!-- Upload Tab Content -->
-  <div *ngIf="activeTab === 'upload'" class="bg-[#1f2937] rounded-lg p-6">
-    <h2 class="text-2xl font-semibold text-white mb-6">Upload New Project</h2>
-    <form #projectUpload="ngForm" (submit)="uploadProject(projectUpload.value)">
-      <div class="mb-6">
-        <label
-          class="block mb-2 text-sm font-medium text-gray-300"
-          for="user_avatar"
-          >Upload Image</label
-        >
-        <input
-          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-          aria-describedby="user_avatar_help"
-          id="user_avatar"
-          type="file"
-          [(ngModel)]="img"
-          (change)="getImage($event)"
-          name="img"
-          accept="image/*"
-        />
-        <div class="w-full bg-gray-200 my-2 rounded-full dark:bg-gray-700">
-          <div
-            class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-            [style.width]="uploadProgress"
-          >
-            {{ uploadProgress }}
+    <p
+      *ngIf="notice"
+      class="notice"
+      [class.is-error]="notice.kind === 'error'"
+      role="status"
+      aria-live="polite"
+    >
+      {{ notice.text }}
+    </p>
+
+    <ng-container *ngIf="tab === 'projects'">
+      <section *ngIf="view === 'list'">
+        <div class="list-head">
+          <h2 class="section-title">
+            Projects
+            <span class="count"
+              >{{ activeCount }} live · {{ projects.length }} total</span
+            >
+          </h2>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="a-icon-btn"
+              title="Refresh"
+              aria-label="Refresh"
+              (click)="loadProjects()"
+            >
+              <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="a-btn a-btn-accent"
+              (click)="newProject()"
+            >
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> New project
+            </button>
           </div>
         </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-6">
-          <label
-            for="projectName"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Project Name</label
-          >
-          <input
-            type="text"
-            id="projectName"
-            ngModel
-            name="projectName"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="PROJECT NAME"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="category"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Project Category</label
-          >
-          <select
-            id="category"
-            ngModel
-            name="category"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required
-          >
-            <option value="web">Web</option>
-            <option value="mobile">Mobile</option>
-          </select>
-        </div>
-      </div>
-      <div class="mb-6">
-        <label
-          for="projectDescription"
-          class="block mb-2 text-sm font-medium text-gray-300"
-          >Project Description</label
-        >
-        <textarea
-          id="projectDescription"
-          ngModel
-          name="projectDesc"
-          rows="3"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Project Description"
-        ></textarea>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-6">
-          <label
-            for="githubLink"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Github Link</label
-          >
-          <input
-            type="url"
-            id="githubLink"
-            ngModel
-            name="githubLink"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://github.com/..."
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="projectLink"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Project Link (Live URL)</label
-          >
-          <input
-            type="url"
-            id="projectLink"
-            ngModel
-            name="projectLink"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://example.com"
-          />
-        </div>
-      </div>
-      <div class="mb-6">
-        <label for="techs" class="block mb-2 text-sm font-medium text-gray-300"
-          >Technologies used</label
-        >
-        <input
-          type="text"
-          id="techs"
-          ngModel
-          name="techs"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Angular, TypeScript, Firebase (separate with comma)"
-        />
-      </div>
-      <!-- Mobile-specific media and links -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-6">
-          <label
-            for="demoVideo"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Demo Video URL (mp4/webm)</label
-          >
-          <input
-            type="url"
-            id="demoVideo"
-            ngModel
-            name="demoVideo"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://cdn.example.com/demo.mp4"
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="screenshots"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Screenshots (comma-separated URLs)</label
-          >
-          <input
-            type="text"
-            id="screenshots"
-            ngModel
-            name="screenshots"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://img1.jpg, https://img2.jpg"
-          />
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-6">
-          <span class="block mb-2 text-sm font-medium text-gray-300"
-            >Platforms</span
-          >
-          <label class="inline-flex items-center mr-4">
-            <input type="checkbox" ngModel name="platformsIOS" class="mr-2" />
-            <span class="text-sm text-gray-300">iOS</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input
-              type="checkbox"
-              ngModel
-              name="platformsAndroid"
-              class="mr-2"
-            />
-            <span class="text-sm text-gray-300">Android</span>
-          </label>
-        </div>
-        <div class="mb-6"></div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-6">
-          <label
-            for="appStore"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >App Store Link</label
-          >
-          <input
-            type="url"
-            id="appStore"
-            ngModel
-            name="appStore"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://apps.apple.com/..."
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="playStore"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >Play Store Link</label
-          >
-          <input
-            type="url"
-            id="playStore"
-            ngModel
-            name="playStore"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://play.google.com/store/apps/details?id=..."
-          />
-        </div>
-        <div class="mb-6">
-          <label for="apk" class="block mb-2 text-sm font-medium text-gray-300"
-            >APK Link</label
-          >
-          <input
-            type="url"
-            id="apk"
-            ngModel
-            name="apk"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://example.com/app.apk"
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="testflight"
-            class="block mb-2 text-sm font-medium text-gray-300"
-            >TestFlight Link</label
-          >
-          <input
-            type="url"
-            id="testflight"
-            ngModel
-            name="testflight"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="https://testflight.apple.com/..."
-          />
-        </div>
-      </div>
-      <div class="mb-6">
-        <label class="flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            ngModel
-            name="isActive"
-            [value]="true"
-            class="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            checked
-          />
-          <span class="text-sm font-medium text-gray-300">
-            Active (Display on portfolio)
-          </span>
-        </label>
-      </div>
-      <button
-        type="submit"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        <i class="fa-solid fa-plus mr-2"></i>
-        Add Project
-      </button>
-    </form>
-  </div>
 
-  <!-- Certificates Tab Content -->
-  <app-certificate-admin *ngIf="activeTab === 'certificates'"></app-certificate-admin>
+        <p *ngIf="loading && !projects.length" class="empty">Loading…</p>
+        <p *ngIf="!loading && !projects.length" class="empty">
+          No projects yet.
+        </p>
 
-  <!-- Manage Tab Content -->
-  <div *ngIf="activeTab === 'manage'" class="bg-[#1f2937] rounded-lg p-6">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold text-white">Manage Projects</h2>
-      <button
-        (click)="loadProjects()"
-        class="text-white bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
-      >
-        <i class="fa-solid fa-refresh mr-2"></i>
-        Refresh
-      </button>
-    </div>
-
-    <!-- Projects List -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm text-left text-gray-400">
-        <thead class="text-xs text-gray-400 uppercase bg-gray-800">
-          <tr>
-            <th scope="col" class="px-6 py-3">Image</th>
-            <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3">Category</th>
-            <th scope="col" class="px-6 py-3">Platforms</th>
-            <th scope="col" class="px-6 py-3">Status</th>
-            <th scope="col" class="px-6 py-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
+        <ul class="project-list">
+          <li
             *ngFor="let project of projects"
-            class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700"
+            class="project-row"
+            [class.is-hidden]="project.data.isActive === false"
           >
-            <td class="px-6 py-4">
-              <img
-                [src]="project.img"
-                [alt]="project.projectName"
-                class="w-16 h-16 object-cover rounded"
-                *ngIf="project.img"
-              />
-              <span class="text-gray-500" *ngIf="!project.img">No image</span>
-            </td>
-            <td class="px-6 py-4 font-medium text-white">
-              {{ project.projectName }}
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 text-xs rounded"
-                [class.bg-blue-900]="project.category === 'web'"
-                [class.bg-purple-900]="project.category === 'mobile'"
-                [class.text-blue-300]="project.category === 'web'"
-                [class.text-purple-300]="project.category === 'mobile'"
-              >
-                {{ project.category?.toUpperCase() || "WEB" }}
+            <button type="button" class="row-main" (click)="edit(project)">
+              <span class="thumb">
+                <img *ngIf="project.data.img" [src]="thumb(project)" alt="" />
               </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex gap-2">
-                <span
-                  *ngIf="project.platforms?.includes('ios')"
-                  class="px-2 py-1 text-xs rounded bg-gray-700 text-gray-200"
-                  >iOS</span
-                >
-                <span
-                  *ngIf="project.platforms?.includes('android')"
-                  class="px-2 py-1 text-xs rounded bg-gray-700 text-gray-200"
-                  >Android</span
-                >
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 text-xs rounded"
-                [class.bg-green-900]="project.isActive"
-                [class.bg-red-900]="!project.isActive"
-                [class.text-green-300]="project.isActive"
-                [class.text-red-300]="!project.isActive"
-              >
-                {{ project.isActive ? "ACTIVE" : "INACTIVE" }}
+              <span class="row-text">
+                <span class="row-name">{{ project.data.projectName }}</span>
+                <span class="row-summary">{{ summary(project) }}</span>
+                <span class="row-chips">
+                  <span class="a-chip">{{
+                    project.data.category === 'mobile' ? 'Mobile' : 'Web'
+                  }}</span>
+                  <span *ngIf="project.data.year" class="a-chip">{{
+                    project.data.year
+                  }}</span>
+                  <span *ngIf="project.data.isActive === false" class="a-chip">
+                    Hidden
+                  </span>
+                  <span *ngIf="!hasWriteUp(project)" class="a-chip is-warn">
+                    No write-up
+                  </span>
+                </span>
               </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex gap-2">
-                <button
-                  (click)="toggleActive(project)"
+            </button>
+            <div class="row-actions">
+              <a
+                *ngIf="project.data.isActive !== false"
+                class="a-icon-btn"
+                [href]="'/work/' + slug(project)"
+                target="_blank"
+                rel="noopener"
+                title="Open page"
+                [attr.aria-label]="'Open ' + project.data.projectName + ' page'"
+              >
+                <i
+                  class="fa-solid fa-arrow-up-right-from-square"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <button
+                type="button"
+                class="a-icon-btn"
+                [title]="project.data.isActive === false ? 'Show' : 'Hide'"
+                [attr.aria-label]="
+                  (project.data.isActive === false ? 'Show ' : 'Hide ') +
+                  project.data.projectName
+                "
+                (click)="toggleActive(project)"
+              >
+                <i
                   [class]="
-                    project.isActive
-                      ? 'text-yellow-600 hover:text-yellow-800'
-                      : 'text-green-600 hover:text-green-800'
+                    project.data.isActive === false
+                      ? 'fa-solid fa-eye'
+                      : 'fa-solid fa-eye-slash'
                   "
-                  class="p-2 rounded hover:bg-gray-600"
-                  [title]="project.isActive ? 'Deactivate' : 'Activate'"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <button
+                type="button"
+                class="a-icon-btn"
+                title="Edit"
+                [attr.aria-label]="'Edit ' + project.data.projectName"
+                (click)="edit(project)"
+              >
+                <i class="fa-solid fa-pen" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="a-icon-btn is-danger"
+                title="Delete"
+                [attr.aria-label]="'Delete ' + project.data.projectName"
+                (click)="remove(project)"
+              >
+                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <form
+        *ngIf="view === 'edit'"
+        class="editor"
+        (ngSubmit)="save()"
+        novalidate
+      >
+        <div class="editor-head">
+          <button type="button" class="a-btn" (click)="closeEditor()">
+            <span aria-hidden="true">←</span> Projects
+          </button>
+          <h2 class="section-title">
+            {{
+              editingId
+                ? 'Edit ' + (form.projectName || 'project')
+                : 'New project'
+            }}
+          </h2>
+        </div>
+
+        <fieldset class="a-panel">
+          <legend class="a-panel-title">Basics</legend>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="a-label" for="name">Name</label>
+              <input
+                id="name"
+                name="projectName"
+                class="a-input"
+                placeholder="Project name"
+                [(ngModel)]="form.projectName"
+                required
+              />
+            </div>
+            <div>
+              <span class="a-label">Type</span>
+              <div class="a-segmented">
+                <button
+                  type="button"
+                  [class.is-active]="form.category === 'web'"
+                  (click)="form.category = 'web'"
                 >
-                  <i
-                    [class]="
-                      project.isActive
-                        ? 'fa-solid fa-eye-slash'
-                        : 'fa-solid fa-eye'
-                    "
-                  ></i>
+                  Web
                 </button>
                 <button
-                  (click)="startEdit(project)"
-                  class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-gray-600"
-                  title="Edit"
+                  type="button"
+                  [class.is-active]="form.category === 'mobile'"
+                  (click)="form.category = 'mobile'"
                 >
-                  <i class="fa-solid fa-edit"></i>
-                </button>
-                <button
-                  (click)="deleteProject(project)"
-                  class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-gray-600"
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-trash"></i>
+                  Mobile
                 </button>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div *ngIf="projects.length === 0" class="text-center py-12">
-        <p class="text-gray-400 text-lg">No projects found</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Modal -->
-  <div
-    *ngIf="editingProject"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-  >
-    <div
-      class="bg-[#1f2937] rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
-    >
-      <div class="flex justify-between items-center mb-6">
-        <h3 class="text-2xl font-semibold text-white">Edit Project</h3>
-        <button (click)="cancelEdit()" class="text-gray-400 hover:text-white">
-          <i class="fa-solid fa-times text-xl"></i>
-        </button>
-      </div>
-      <form (ngSubmit)="updateProject()">
-        <div class="mb-6">
-          <label class="block mb-2 text-sm font-medium text-gray-300">
-            Current Image
-          </label>
-          <img *ngIf="editingProject.img" [src]="editingProject.img" class="h-24 w-auto mb-3 rounded-lg border border-gray-600" />
-          <label class="block mb-2 text-sm font-medium text-gray-300">
-            Upload New Image (Optional)
-          </label>
-          <input
-            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-            type="file"
-            (change)="getImage($event)"
-            accept="image/*"
-          />
-          <div class="w-full bg-gray-200 my-2 rounded-full dark:bg-gray-700" *ngIf="uploadProgress !== 0 && uploadProgress !== '0%'">
-            <div
-              class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-              [style.width]="uploadProgress"
-            >
-              {{ uploadProgress }}
+            </div>
+            <div>
+              <label class="a-label" for="tagline">Tagline</label>
+              <input
+                id="tagline"
+                name="tagline"
+                class="a-input"
+                placeholder="One line about it"
+                [(ngModel)]="form.tagline"
+              />
+              <p class="a-hint">
+                One line, shown on the card and under the title.
+              </p>
+            </div>
+            <div>
+              <label class="a-label" for="year">Year</label>
+              <input
+                id="year"
+                name="year"
+                class="a-input"
+                inputmode="numeric"
+                placeholder="e.g. 2026"
+                [(ngModel)]="form.year"
+              />
+              <p class="a-hint">Projects are listed newest first.</p>
             </div>
           </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300">
-              Project Name
-            </label>
+          <div class="mt-5">
+            <label class="a-label" for="desc">Short description</label>
+            <textarea
+              id="desc"
+              name="projectDesc"
+              rows="2"
+              class="a-input"
+              placeholder="Used on the card when there's no tagline"
+              [(ngModel)]="form.projectDesc"
+            ></textarea>
+          </div>
+          <label class="a-check mt-5">
             <input
-              type="text"
-              [(ngModel)]="editForm.projectName"
-              name="editProjectName"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required
+              type="checkbox"
+              name="isActive"
+              [(ngModel)]="form.isActive"
             />
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300">
-              Category
-            </label>
-            <select
-              [(ngModel)]="editForm.category"
-              name="editCategory"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option value="web">Web</option>
-              <option value="mobile">Mobile</option>
-            </select>
-          </div>
-        </div>
-        <div class="mb-6">
-          <label class="block mb-2 text-sm font-medium text-gray-300">
-            Description
+            Show on the site
           </label>
-          <textarea
-            [(ngModel)]="editForm.projectDesc"
-            name="editDesc"
-            rows="3"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          ></textarea>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300">
-              Github Link
-            </label>
-            <input
-              type="url"
-              [(ngModel)]="editForm.githubLink"
-              name="editGithubLink"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
+        </fieldset>
+
+        <fieldset class="a-panel">
+          <legend class="a-panel-title">Images</legend>
+          <div class="grid gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div>
+              <span class="a-label">Cover</span>
+              <app-image-field
+                [(src)]="form.img"
+                label="cover"
+                folder="portfolio"
+                [shape]="form.category === 'mobile' ? 'tall' : 'wide'"
+                (busy)="onBusy($event)"
+              ></app-image-field>
+              <p class="a-hint">
+                {{
+                  form.category === 'mobile'
+                    ? 'A phone screenshot.'
+                    : 'A desktop screenshot. The top left shows on the card.'
+                }}
+              </p>
+            </div>
+            <div *ngIf="form.category === 'mobile'">
+              <span class="a-label">More phone screens on the card</span>
+              <div class="phone-grid">
+                <app-image-field
+                  *ngFor="
+                    let shot of form.screenshots;
+                    let i = index;
+                    trackBy: trackByIndex
+                  "
+                  [src]="shot"
+                  (srcChange)="setScreenshot(i, $event)"
+                  label="phone screen"
+                  folder="portfolio"
+                  shape="tall"
+                  (busy)="onBusy($event)"
+                ></app-image-field>
+              </div>
+              <button
+                *ngIf="form.screenshots.length < 2"
+                type="button"
+                class="a-btn mt-3"
+                (click)="addScreenshot()"
+              >
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Add a screen
+              </button>
+            </div>
           </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300">
-              Project Link
-            </label>
-            <input
-              type="url"
-              [(ngModel)]="editForm.projectLink"
-              name="editProjectLink"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
+        </fieldset>
+
+        <fieldset class="a-panel">
+          <legend class="a-panel-title">Links</legend>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="a-label" for="live">Live site</label>
+              <input
+                id="live"
+                name="projectLink"
+                type="url"
+                class="a-input"
+                placeholder="https://example.com"
+                [(ngModel)]="form.projectLink"
+              />
+            </div>
+            <div>
+              <label class="a-label" for="source">Source code</label>
+              <input
+                id="source"
+                name="githubLink"
+                type="url"
+                class="a-input"
+                placeholder="https://github.com/Damilarr/..."
+                [(ngModel)]="form.githubLink"
+              />
+              <p class="a-hint">Leave empty if the repo is private.</p>
+            </div>
           </div>
-        </div>
-        <div class="mb-6">
-          <label class="block mb-2 text-sm font-medium text-gray-300">
-            Technologies (comma separated)
-          </label>
+          <ng-container *ngIf="form.category === 'mobile'">
+            <div class="mt-5 flex flex-wrap gap-5">
+              <label class="a-check">
+                <input
+                  type="checkbox"
+                  name="platformsIOS"
+                  [(ngModel)]="form.platformsIOS"
+                />
+                iOS
+              </label>
+              <label class="a-check">
+                <input
+                  type="checkbox"
+                  name="platformsAndroid"
+                  [(ngModel)]="form.platformsAndroid"
+                />
+                Android
+              </label>
+            </div>
+            <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <div>
+                <label class="a-label" for="appStore">App Store</label>
+                <input
+                  id="appStore"
+                  name="appStore"
+                  type="url"
+                  class="a-input"
+                  [(ngModel)]="form.appStore"
+                />
+              </div>
+              <div>
+                <label class="a-label" for="playStore">Google Play</label>
+                <input
+                  id="playStore"
+                  name="playStore"
+                  type="url"
+                  class="a-input"
+                  [(ngModel)]="form.playStore"
+                />
+              </div>
+              <div>
+                <label class="a-label" for="testflight">TestFlight</label>
+                <input
+                  id="testflight"
+                  name="testflight"
+                  type="url"
+                  class="a-input"
+                  [(ngModel)]="form.testflight"
+                />
+              </div>
+              <div>
+                <label class="a-label" for="apk">APK download</label>
+                <input
+                  id="apk"
+                  name="apk"
+                  type="url"
+                  class="a-input"
+                  [(ngModel)]="form.apk"
+                />
+              </div>
+            </div>
+          </ng-container>
+        </fieldset>
+
+        <fieldset class="a-panel">
+          <legend class="a-panel-title">Stack</legend>
+          <label class="a-label" for="techs">Technologies</label>
           <input
-            type="text"
-            [(ngModel)]="editForm.techs"
-            name="editTechs"
-            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="techs"
+            name="techs"
+            class="a-input"
+            placeholder="Next.js, PostgreSQL, Prisma"
+            [(ngModel)]="form.techs"
           />
-        </div>
-        <!-- Edit: mobile-specific fields -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >Demo Video URL</label
-            >
-            <input
-              type="url"
-              [(ngModel)]="editForm.demoVideo"
-              name="editDemoVideo"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >Screenshots (comma-separated URLs)</label
-            >
-            <input
-              type="text"
-              [(ngModel)]="editForm.screenshots"
-              name="editScreenshots"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-        </div>
-        <div class="mb-6">
-          <span class="block mb-2 text-sm font-medium text-gray-300"
-            >Platforms</span
+          <p class="a-hint">
+            Separate with commas. The first three show on the card.
+          </p>
+        </fieldset>
+
+        <fieldset class="a-panel">
+          <legend class="a-panel-title">Write-up</legend>
+          <label class="a-label" for="intro">Intro</label>
+          <textarea
+            id="intro"
+            name="intro"
+            rows="4"
+            class="a-input"
+            placeholder="What it is and who it's for, in a couple of sentences"
+            [(ngModel)]="form.intro"
+          ></textarea>
+
+          <div
+            *ngFor="
+              let section of form.sections;
+              let i = index;
+              trackBy: trackByIndex
+            "
+            class="section-card"
           >
-          <label class="inline-flex items-center mr-4">
+            <div class="section-card-head">
+              <span class="section-number">Section {{ i + 1 }}</span>
+              <div class="flex gap-1">
+                <button
+                  type="button"
+                  class="a-icon-btn"
+                  title="Move up"
+                  aria-label="Move section up"
+                  [disabled]="i === 0"
+                  (click)="moveSection(i, -1)"
+                >
+                  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="a-icon-btn"
+                  title="Move down"
+                  aria-label="Move section down"
+                  [disabled]="i === form.sections.length - 1"
+                  (click)="moveSection(i, 1)"
+                >
+                  <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="a-icon-btn is-danger"
+                  title="Remove section"
+                  aria-label="Remove section"
+                  (click)="removeSection(i)"
+                >
+                  <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <label class="a-label" [for]="'heading' + i">Heading</label>
             <input
-              type="checkbox"
-              [(ngModel)]="editForm.platformsIOS"
-              name="editPlatformsIOS"
-              class="mr-2"
+              [id]="'heading' + i"
+              [name]="'heading' + i"
+              class="a-input"
+              placeholder="Optional"
+              [(ngModel)]="section.heading"
             />
-            <span class="text-sm text-gray-300">iOS</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input
-              type="checkbox"
-              [(ngModel)]="editForm.platformsAndroid"
-              name="editPlatformsAndroid"
-              class="mr-2"
-            />
-            <span class="text-sm text-gray-300">Android</span>
-          </label>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >App Store Link</label
-            >
-            <input
-              type="url"
-              [(ngModel)]="editForm.appStore"
-              name="editAppStore"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
+
+            <label class="a-label mt-4" [for]="'body' + i">Text</label>
+            <textarea
+              [id]="'body' + i"
+              [name]="'body' + i"
+              rows="4"
+              class="a-input"
+              [(ngModel)]="section.body"
+            ></textarea>
+            <p class="a-hint">Leave a blank line between paragraphs.</p>
+
+            <div class="mt-5 grid gap-6 sm:grid-cols-2">
+              <div>
+                <span class="a-label">Screenshot</span>
+                <app-image-field
+                  [(src)]="section.figure.src"
+                  label="screenshot"
+                  folder="portfolio/work"
+                  (busy)="onBusy($event)"
+                ></app-image-field>
+              </div>
+              <div *ngIf="section.figure.src" class="flex flex-col gap-4">
+                <div>
+                  <label class="a-label" [for]="'figAlt' + i"
+                    >Describe it</label
+                  >
+                  <input
+                    [id]="'figAlt' + i"
+                    [name]="'figAlt' + i"
+                    class="a-input"
+                    placeholder="For screen readers"
+                    [(ngModel)]="section.figure.alt"
+                  />
+                </div>
+                <div>
+                  <label class="a-label" [for]="'figCaption' + i"
+                    >Caption</label
+                  >
+                  <input
+                    [id]="'figCaption' + i"
+                    [name]="'figCaption' + i"
+                    class="a-input"
+                    placeholder="Optional"
+                    [(ngModel)]="section.figure.caption"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <span class="a-label">Phone screens</span>
+              <div class="phone-grid">
+                <div
+                  *ngFor="
+                    let phone of section.phones;
+                    let j = index;
+                    trackBy: trackByIndex
+                  "
+                  class="flex flex-col gap-3"
+                >
+                  <app-image-field
+                    [(src)]="phone.src"
+                    label="phone screen"
+                    folder="portfolio/work"
+                    shape="tall"
+                    (busy)="onBusy($event)"
+                  ></app-image-field>
+                  <input
+                    [name]="'phoneAlt' + i + '-' + j"
+                    class="a-input"
+                    placeholder="Describe it"
+                    [attr.aria-label]="'Describe phone screen ' + (j + 1)"
+                    [(ngModel)]="phone.alt"
+                  />
+                  <button
+                    type="button"
+                    class="a-btn a-btn-danger self-start"
+                    (click)="removePhone(i, j)"
+                  >
+                    Remove screen
+                  </button>
+                </div>
+              </div>
+              <button
+                *ngIf="section.phones.length < maxPhones"
+                type="button"
+                class="a-btn mt-3"
+                (click)="addPhone(i)"
+              >
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Add a phone
+                screen
+              </button>
+              <div *ngIf="section.phones.length" class="mt-4">
+                <label class="a-label" [for]="'phonesCaption' + i"
+                  >Caption</label
+                >
+                <input
+                  [id]="'phonesCaption' + i"
+                  [name]="'phonesCaption' + i"
+                  class="a-input"
+                  placeholder="On a phone"
+                  [(ngModel)]="section.phonesCaption"
+                />
+              </div>
+            </div>
           </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >Play Store Link</label
-            >
-            <input
-              type="url"
-              [(ngModel)]="editForm.playStore"
-              name="editPlayStore"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >APK Link</label
-            >
-            <input
-              type="url"
-              [(ngModel)]="editForm.apk"
-              name="editApk"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-300"
-              >TestFlight Link</label
-            >
-            <input
-              type="url"
-              [(ngModel)]="editForm.testflight"
-              name="editTestflight"
-              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-        </div>
-        <div class="mb-6">
-          <label class="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              [(ngModel)]="editForm.isActive"
-              name="editIsActive"
-              class="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <span class="text-sm font-medium text-gray-300">
-              Active (Display on portfolio)
-            </span>
-          </label>
-        </div>
-        <div class="flex gap-4">
-          <button
-            type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700"
+
+          <button type="button" class="a-btn mt-5" (click)="addSection()">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i> Add a section
+          </button>
+        </fieldset>
+
+        <div class="editor-actions">
+          <span *ngIf="uploads > 0" class="text-[13px]"
+            >Waiting for uploads…</span
           >
-            <i class="fa-solid fa-save mr-2"></i>
-            Save Changes
+          <button type="button" class="a-btn" (click)="closeEditor()">
+            Cancel
           </button>
           <button
-            type="button"
-            (click)="cancelEdit()"
-            class="text-white bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+            type="submit"
+            class="a-btn a-btn-accent"
+            [disabled]="saving || uploads > 0"
           >
-            Cancel
+            {{
+              saving ? 'Saving…' : editingId ? 'Save changes' : 'Add project'
+            }}
           </button>
         </div>
       </form>
-    </div>
+    </ng-container>
+
+    <app-certificate-admin
+      *ngIf="tab === 'certificates'"
+    ></app-certificate-admin>
   </div>
-</section>
+</div>

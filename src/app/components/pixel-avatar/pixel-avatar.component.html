@@ -1,0 +1,50 @@
+<button
+  #trigger
+  type="button"
+  class="avatar"
+  [style.width.px]="size"
+  [style.height.px]="size"
+  [attr.aria-label]="'Open a larger photo of ' + name"
+  (pointerenter)="onEnter()"
+  (pointerleave)="onLeave()"
+  (click)="open()"
+>
+  <canvas
+    #canvas
+    aria-hidden="true"
+    [style.width.px]="size"
+    [style.height.px]="size"
+  ></canvas>
+</button>
+
+<div
+  *ngIf="expanded"
+  class="lightbox"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'Photo of ' + name"
+  (click)="close()"
+>
+  <figure #card class="card">
+    <canvas
+      #bigCanvas
+      role="img"
+      [attr.aria-label]="'Photo of ' + name"
+    ></canvas>
+    <figcaption class="caption">
+      <span class="caption-name">{{ name }}</span>
+      <span class="caption-role">{{ caption }}</span>
+    </figcaption>
+  </figure>
+  <button
+    #closeButton
+    type="button"
+    class="close"
+    aria-label="Close photo"
+    (click)="close()"
+  >
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M4 4l8 8M12 4l-8 8" />
+    </svg>
+  </button>
+</div>

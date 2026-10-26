@@ -1,52 +1,154 @@
-/* Admin Tab Styles */
-.admin-tab-button {
-  @apply px-6 py-3 font-semibold transition-all duration-300 flex items-center border-b-2;
-  cursor: pointer;
+.head {
+  @apply mb-8 flex items-start justify-between gap-4;
 }
 
-.active-admin-tab {
-  @apply text-blue-400 border-blue-400;
+.title {
+  @apply text-2xl font-semibold;
+  color: var(--primary);
+  letter-spacing: -0.02em;
 }
 
-.inactive-admin-tab {
-  @apply text-gray-400 border-transparent hover:text-gray-300 hover:border-gray-600;
+.subtitle {
+  @apply mt-1 text-sm;
+  color: var(--secondary);
 }
 
-/* Table Styles */
-table {
-  border-collapse: separate;
-  border-spacing: 0;
+.notice {
+  @apply mb-6 rounded-[10px] px-4 py-3 text-sm;
+  color: var(--primary);
+  background-color: rgba(248, 212, 122, 0.1);
+  border: 1px solid rgba(248, 212, 122, 0.25);
 }
 
-tbody tr:last-child td {
-  border-bottom: none;
+.notice.is-error {
+  background-color: rgba(240, 138, 126, 0.1);
+  border-color: rgba(240, 138, 126, 0.3);
 }
 
-/* Modal Styles */
-.fixed {
-  position: fixed;
+.section-title {
+  @apply flex items-baseline gap-3 text-lg font-semibold;
+  color: var(--primary);
 }
 
-/* Custom scrollbar for modal */
-.max-h-\[90vh\]::-webkit-scrollbar {
-  width: 8px;
+.count {
+  @apply font-mono text-[11px] font-normal tracking-[0.08em];
+  color: var(--muted);
 }
 
-.max-h-\[90vh\]::-webkit-scrollbar-track {
-  background: #1f2937;
-  border-radius: 4px;
+.list-head {
+  @apply mb-5 flex flex-wrap items-center justify-between gap-3;
 }
 
-.max-h-\[90vh\]::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 4px;
+.empty {
+  @apply py-10 text-sm;
 }
 
-.max-h-\[90vh\]::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+.project-list {
+  @apply flex flex-col gap-2;
 }
 
-/* Button hover effects */
-button:hover {
-  transition: all 0.2s ease;
+.project-row {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[14px] p-2 pr-3;
+  background-color: #242322;
+  border: 1px solid var(--border);
+  transition: border-color 150ms ease;
+}
+
+.project-row:hover {
+  border-color: var(--border-hi);
+}
+
+.project-row.is-hidden .thumb,
+.project-row.is-hidden .row-text {
+  opacity: 0.5;
+}
+
+.row-main {
+  @apply flex min-w-0 items-center gap-3 text-left sm:gap-4;
+  flex: 1 1 15rem;
+}
+
+.thumb {
+  @apply block h-14 w-20 shrink-0 overflow-hidden rounded-[8px] sm:h-16 sm:w-24;
+  background-color: var(--surface);
+}
+
+.thumb img {
+  @apply h-full w-full object-cover;
+  object-position: top left;
+}
+
+.row-text {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.row-name {
+  @apply truncate text-[15px] font-medium;
+  color: var(--primary);
+}
+
+.row-summary {
+  @apply truncate text-[13px];
+}
+
+.row-chips {
+  @apply mt-0.5 flex flex-wrap gap-1.5;
+}
+
+.a-chip.is-warn {
+  color: var(--accent);
+  border-color: rgba(248, 212, 122, 0.35);
+}
+
+.row-actions {
+  @apply ml-auto flex shrink-0 items-center gap-0.5;
+}
+
+.a-icon-btn.is-danger:hover {
+  color: #f08a7e;
+  background-color: rgba(240, 138, 126, 0.14);
+}
+
+.editor {
+  @apply flex flex-col gap-5;
+}
+
+.editor-head {
+  @apply mb-1 flex flex-wrap items-center gap-4;
+}
+
+fieldset.a-panel {
+  min-width: 0;
+}
+
+.section-card {
+  @apply mt-6 rounded-[12px] p-4 sm:p-5;
+  background-color: rgba(238, 235, 221, 0.02);
+  border: 1px solid var(--border);
+}
+
+.section-card-head {
+  @apply mb-4 flex items-center justify-between;
+}
+
+.section-number {
+  @apply font-mono text-[11px] uppercase tracking-[0.16em];
+  color: var(--muted);
+}
+
+.phone-grid {
+  @apply grid grid-cols-2 gap-4 sm:grid-cols-3;
+}
+
+.editor-actions {
+  @apply sticky bottom-4 z-10 flex items-center justify-end gap-3 self-end rounded-full p-2;
+  background-color: rgba(42, 41, 40, 0.92);
+  border: 1px solid var(--border-hi);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.7);
+}
+
+.editor-actions > span {
+  @apply pl-3;
 }

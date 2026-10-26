@@ -1,0 +1,40 @@
+<div class="frame" [class.is-tall]="shape === 'tall'">
+  <img
+    *ngIf="src && !broken"
+    [src]="preview"
+    [alt]="label"
+    (error)="broken = true"
+  />
+  <span *ngIf="src && broken && progress === null" class="empty">
+    This image can't be loaded. Upload a new one.
+  </span>
+  <span *ngIf="!src && progress === null" class="empty">No image yet</span>
+  <div *ngIf="progress !== null" class="uploading">
+    <span>Uploading {{ progress }}%</span>
+    <div class="a-progress"><span [style.width.%]="progress"></span></div>
+  </div>
+</div>
+
+<div class="actions">
+  <label class="a-btn">
+    <input
+      type="file"
+      accept="image/*"
+      class="sr-only"
+      [attr.aria-label]="(src ? 'Replace ' : 'Upload ') + label"
+      (change)="pick($event)"
+    />
+    <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i>
+    {{ src ? 'Replace' : 'Upload' }}
+  </label>
+  <button
+    *ngIf="src"
+    type="button"
+    class="a-btn a-btn-danger"
+    (click)="remove()"
+  >
+    Remove
+  </button>
+</div>
+
+<p *ngIf="error" class="a-error mt-2" role="alert">{{ error }}</p>

@@ -1,75 +1,63 @@
-.about-inner {
-  @apply flex w-full flex-col py-16 md:py-24;
+.about {
+  @apply flex flex-col gap-8;
 }
 
-.eyebrow {
-  @apply text-[10px] uppercase tracking-[0.35em] text-[#f8d47a] sm:text-xs;
-  white-space: nowrap;
+.intro {
+  @apply mb-6 flex items-center gap-3.5;
 }
 
-.hairline {
-  flex: 1;
-  height: 1px;
-  background: rgba(238, 235, 221, 0.14);
-  transform: translateY(-3px);
+.name {
+  @apply text-xl font-semibold leading-5;
+  color: var(--primary);
+  letter-spacing: -0.01em;
 }
 
-.about-title {
-  @apply mt-4 font-bold uppercase text-whitish;
-  font-size: clamp(3rem, 12vw, 9.5rem);
-  line-height: 0.86;
-  letter-spacing: -0.05em;
+.role {
+  @apply text-sm font-medium leading-4;
+  color: var(--secondary);
 }
 
-.about-grid {
-  @apply mt-10 grid grid-cols-1 gap-12 md:mt-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20;
-}
-
-.about-desc {
-  @apply text-lg text-whitish sm:text-xl md:text-2xl;
-  line-height: 1.55;
-}
-
-.about-stack {
-  @apply flex flex-col self-start;
-  border-top: 1px solid rgba(238, 235, 221, 0.14);
-}
-
-.stack-row {
-  @apply flex flex-col gap-3 py-5 sm:flex-row sm:items-baseline sm:gap-6;
-  border-bottom: 1px solid rgba(238, 235, 221, 0.14);
-}
-
-.stack-row dt {
-  @apply shrink-0 text-xs tracking-[0.3em] text-[#f8d47a] sm:w-36;
-}
-
-.stack-index {
-  @apply mr-3;
-  color: rgba(238, 235, 221, 0.35);
-}
-
-.stack-row dd {
-  @apply flex flex-wrap gap-x-5 gap-y-1 text-sm;
-  color: rgba(238, 235, 221, 0.75);
+.bio {
+  @apply flex flex-col gap-5 text-[15.5px];
   line-height: 1.7;
 }
 
-/* Tech pill styling - override global styles */
-.techs {
-  position: relative;
-  transform-origin: center center;
-  width: auto !important; /* Override the w-1/4 from global styles */
-  min-width: fit-content;
-  flex-shrink: 0;
+.em {
+  @apply font-medium;
+  color: var(--primary);
 }
 
-.tech-pill {
-  will-change: transform, opacity;
-  color: rgba(238, 235, 221, 0.85);
+.stack {
+  @apply flex flex-col gap-2.5 text-sm;
 }
 
-/* Logo SVGs ship dark; tint them to match the icon font */
-.tech-pill img {
-  filter: brightness(0) invert(0.9);
+.stack-row {
+  @apply grid gap-1 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:gap-4;
+}
+
+.stack-row dt {
+  @apply font-mono text-[11px] uppercase leading-[1.6rem] tracking-[0.18em] sm:leading-6;
+  color: var(--muted);
+  transition: color 200ms ease;
+}
+
+.stack-row dd {
+  @apply leading-6;
+  color: var(--secondary);
+  transition: transform 600ms var(--spring-bouncy), color 200ms ease;
+}
+
+@media (hover: hover) {
+  .stack-row:hover dt {
+    color: var(--accent);
+  }
+
+  .stack-row:hover dd {
+    color: var(--primary);
+    transform: translateX(4px);
+  }
+}
+
+.links {
+  @apply flex flex-wrap gap-2;
 }

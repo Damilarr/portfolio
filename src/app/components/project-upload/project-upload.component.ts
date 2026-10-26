@@ -1,276 +1,231 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   Firestore,
   addDoc,
   collection,
-  getDocs,
-  doc,
-  updateDoc,
   deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
 } from '@angular/fire/firestore';
-import { CloudinaryService } from 'src/app/service/cloudinary.service';
+import { slugify } from 'src/app/models/certificate';
+import { projectImage } from 'src/app/models/project';
+import {
+  MAX_PHONES,
+  ProjectForm,
+  docFromForm,
+  emptyFigure,
+  emptyProjectForm,
+  emptySection,
+  formFromDoc,
+} from 'src/app/models/project-form';
+
+interface AdminProject {
+  id: string;
+  data: any;
+}
+
+type Notice = { kind: 'ok' | 'error'; text: string } | null;
 
 @Component({
   selector: 'app-project-upload',
   templateUrl: './project-upload.component.html',
   styleUrls: ['./project-upload.component.css'],
 })
-export class ProjectUploadComponent implements OnInit {
-  downloadUrl: string = '';
-  img: any;
-  uploadProgress: any = 0;
+export class ProjectUploadComponent implements OnInit, OnDestroy {
+  tab: 'projects' | 'certificates' = 'projects';
+  view: 'list' | 'edit' = 'list';
 
-  // Tab management
-  activeTab: 'upload' | 'manage' | 'certificates' = 'upload';
+  projects: AdminProject[] = [];
+  loading = false;
 
-  // Project management
-  projects: any[] = [];
-  editingProject: any = null;
-  editForm: any = {};
+  editingId: string | null = null;
+  form: ProjectForm = emptyProjectForm();
+  saving = false;
+  uploads = 0;
+  notice: Notice = null;
 
-  constructor(
-    private firestore: Firestore,
-    private cloudinary: CloudinaryService
-  ) {}
+  readonly maxPhones = MAX_PHONES;
+
+  private noticeTimer: any;
+
+  constructor(private firestore: Firestore) {}
 
   ngOnInit(): void {
     this.loadProjects();
   }
 
-  setActiveTab(tab: 'upload' | 'manage' | 'certificates') {
-    this.activeTab = tab;
-    if (tab === 'manage') {
-      this.loadProjects();
-    }
+  ngOnDestroy(): void {
+    clearTimeout(this.noticeTimer);
   }
 
-  loadProjects() {
-    const dbInstance = collection(this.firestore, 'projects');
-    getDocs(dbInstance)
-      .then((response: any) => {
-        this.projects = response.docs.map((item: any) => {
-          const data = item.data();
-          return { 
-            ...data, 
-            id: item.id,
-            isActive: data.isActive !== undefined ? data.isActive : true
-          };
-        });
-      })
-      .catch((err) => {
-        alert('Error loading projects: ' + err.message);
-      });
-  }
-
-  toggleActive(project: any) {
-    const projectRef = doc(this.firestore, 'projects', project.id);
-    const newActiveStatus = !project.isActive;
-    updateDoc(projectRef, { isActive: newActiveStatus })
-      .then(() => {
-        project.isActive = newActiveStatus;
-        alert(
-          `Project ${
-            newActiveStatus ? 'activated' : 'deactivated'
-          } successfully`
+  async loadProjects(): Promise<void> {
+    this.loading = true;
+    try {
+      const response = await getDocs(collection(this.firestore, 'projects'));
+      this.projects = response.docs
+        .map((item): AdminProject => ({
+          id: item.id,
+          data: item.data() as any,
+        }))
+        .sort(
+          (a, b) =>
+            Number(a.data.isActive === false) -
+              Number(b.data.isActive === false) ||
+            (Number(b.data.year) || Infinity) -
+              (Number(a.data.year) || Infinity) ||
+            String(a.data.projectName).localeCompare(String(b.data.projectName))
         );
-      })
-      .catch((err) => {
-        alert('Error updating project: ' + err.message);
-      });
-  }
-
-  deleteProject(project: any) {
-    if (
-      confirm(
-        `Are you sure you want to delete "${project.projectName}"? This action cannot be undone.`
-      )
-    ) {
-      const projectRef = doc(this.firestore, 'projects', project.id);
-      deleteDoc(projectRef)
-        .then(() => {
-          alert('Project deleted successfully');
-          this.loadProjects();
-        })
-        .catch((err) => {
-          alert('Error deleting project: ' + err.message);
-        });
+    } catch (err: any) {
+      this.notify('error', `Couldn't load projects: ${err.message}`);
+    } finally {
+      this.loading = false;
     }
   }
 
-  startEdit(project: any) {
-    this.downloadUrl = '';
-    this.uploadProgress = 0;
-    this.editingProject = { ...project };
-    this.editForm = {
-      projectName: project.projectName || '',
-      projectDesc: project.projectDesc || '',
-      githubLink: project.githubLink || '',
-      projectLink: project.projectLink || '',
-      techs: project.techs
-        ? Array.isArray(project.techs)
-          ? project.techs.join(', ')
-          : project.techs
-        : '',
-      category: project.category || 'web',
-      isActive: project.isActive !== undefined ? project.isActive : true,
-      demoVideo: project.demoVideo || '',
-      screenshots:
-        project.screenshots && Array.isArray(project.screenshots)
-          ? project.screenshots.join(', ')
-          : project.screenshots || '',
-      // platform checkboxes derived from array
-      platformsIOS: Array.isArray(project.platforms)
-        ? project.platforms.includes('ios')
-        : false,
-      platformsAndroid: Array.isArray(project.platforms)
-        ? project.platforms.includes('android')
-        : false,
-      // store links
-      appStore: project.storeLinks?.appStore || '',
-      playStore: project.storeLinks?.playStore || '',
-      apk: project.storeLinks?.apk || '',
-      testflight: project.storeLinks?.testflight || '',
-    };
+  newProject(): void {
+    this.editingId = null;
+    this.form = emptyProjectForm();
+    this.view = 'edit';
+    window.scrollTo({ top: 0 });
   }
 
-  cancelEdit() {
-    this.editingProject = null;
-    this.editForm = {};
-    this.downloadUrl = '';
-    this.uploadProgress = 0;
+  edit(project: AdminProject): void {
+    this.editingId = project.id;
+    this.form = formFromDoc(project.data);
+    this.view = 'edit';
+    window.scrollTo({ top: 0 });
   }
 
-  updateProject() {
-    if (!this.editingProject) return;
+  closeEditor(): void {
+    this.view = 'list';
+    this.editingId = null;
+  }
 
-    const projectRef = doc(this.firestore, 'projects', this.editingProject.id);
-    // Build platforms from checkboxes
-    const platforms: string[] = [];
-    if (this.editForm.platformsIOS) platforms.push('ios');
-    if (this.editForm.platformsAndroid) platforms.push('android');
-    // Build storeLinks, only include provided ones
-    const storeLinks: any = {};
-    if (this.editForm.appStore) storeLinks.appStore = this.editForm.appStore;
-    if (this.editForm.playStore) storeLinks.playStore = this.editForm.playStore;
-    if (this.editForm.apk) storeLinks.apk = this.editForm.apk;
-    if (this.editForm.testflight)
-      storeLinks.testflight = this.editForm.testflight;
-
-    const updatedData: any = {
-      projectName: this.editForm.projectName,
-      projectDesc: this.editForm.projectDesc,
-      githubLink: this.editForm.githubLink,
-      projectLink: this.editForm.projectLink,
-      category: this.editForm.category,
-      techs: this.editForm.techs
-        ? this.editForm.techs
-            .split(',')
-            .map((t: string) => t.trim())
-            .filter((t: string) => t)
-        : [],
-      isActive: this.editForm.isActive === true || this.editForm.isActive === 'true',
-      demoVideo: this.editForm.demoVideo || null,
-      screenshots: this.editForm.screenshots
-        ? this.editForm.screenshots
-            .split(',')
-            .map((u: string) => u.trim())
-            .filter((u: string) => u)
-        : [],
-      platforms,
-      storeLinks,
-    };
-
-    if (this.downloadUrl) {
-      updatedData.img = this.downloadUrl;
+  async save(): Promise<void> {
+    if (!this.form.projectName.trim()) {
+      this.notify('error', 'Give the project a name first.');
+      return;
     }
+    if (this.uploads > 0) return;
 
-    updateDoc(projectRef, updatedData)
-      .then(() => {
-        alert('Project updated successfully');
-        this.editingProject = null;
-        this.editForm = {};
-        this.downloadUrl = '';
-        this.uploadProgress = 0;
-        this.loadProjects();
-      })
-      .catch((err) => {
-        alert('Error updating project: ' + err.message);
-      });
-  }
-  uploadProject(value: any) {
-    console.log(value);
-    // Platforms from checkboxes or inferred from links
-    const platforms: string[] = [];
-    if (value.platformsIOS) platforms.push('ios');
-    if (value.platformsAndroid) platforms.push('android');
-    // Store links
-    const storeLinks: any = {};
-    if (value.appStore) storeLinks.appStore = value.appStore;
-    if (value.playStore) storeLinks.playStore = value.playStore;
-    if (value.apk) storeLinks.apk = value.apk;
-    if (value.testflight) storeLinks.testflight = value.testflight;
-    // Infer platforms if not explicitly checked
-    if (platforms.length === 0) {
-      if (storeLinks.appStore || storeLinks.testflight) platforms.push('ios');
-      if (storeLinks.playStore || storeLinks.apk) platforms.push('android');
+    this.saving = true;
+    const data = docFromForm(this.form);
+    try {
+      if (this.editingId) {
+        await updateDoc(doc(this.firestore, 'projects', this.editingId), data);
+      } else {
+        await addDoc(collection(this.firestore, 'projects'), data);
+      }
+      this.notify('ok', `Saved ${data['projectName']}.`);
+      this.closeEditor();
+      await this.loadProjects();
+    } catch (err: any) {
+      this.notify('error', `Couldn't save: ${err.message}`);
+    } finally {
+      this.saving = false;
     }
-
-    const projectArray: any = {
-      projectName: value.projectName,
-      projectDesc: value.projectDesc,
-      githubLink: value.githubLink,
-      projectLink: value.projectLink,
-      techs: value.techs
-        ? value.techs
-            .split(',')
-            .map((t: string) => t.trim())
-            .filter((t: string) => t)
-        : [],
-      img: this.downloadUrl,
-      category: value.category || 'web',
-      isActive: value.isActive === true || value.isActive === 'true' || value.isActive === '' ? true : false,
-      demoVideo: value.demoVideo || null,
-      screenshots: value.screenshots
-        ? value.screenshots
-            .split(',')
-            .map((u: string) => u.trim())
-            .filter((u: string) => u)
-        : [],
-      platforms,
-      storeLinks,
-    };
-    this.addData(projectArray);
   }
-  getImage(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) return;
-    this.uploadProgress = '0%';
 
-    this.cloudinary.upload(file, 'portfolio').subscribe({
-      next: (state) => {
-        this.uploadProgress = `${state.progress}%`;
-        if (state.url) this.downloadUrl = state.url;
-      },
-      error: (err) => {
-        console.error('Upload failed:', err);
-        alert('Image upload failed. Please try again.');
-        this.uploadProgress = '0%';
-      },
-    });
-  }
-  addData(value: any) {
-    const dbInstance = collection(this.firestore, 'projects');
-    addDoc(dbInstance, value)
-      .then(() => {
-        alert('Project added successfully');
-        this.downloadUrl = '';
-        this.uploadProgress = 0;
-        const form = document.querySelector('form');
-        if (form) (form as HTMLFormElement).reset();
-      })
-      .catch((err) => {
-        alert(err.message);
+  async toggleActive(project: AdminProject): Promise<void> {
+    const isActive = project.data.isActive === false;
+    try {
+      await updateDoc(doc(this.firestore, 'projects', project.id), {
+        isActive,
       });
+      project.data = { ...project.data, isActive };
+      this.notify(
+        'ok',
+        `${project.data.projectName} is now ${isActive ? 'visible' : 'hidden'}.`
+      );
+    } catch (err: any) {
+      this.notify('error', `Couldn't update: ${err.message}`);
+    }
+  }
+
+  async remove(project: AdminProject): Promise<void> {
+    const name = String(project.data.projectName || 'this project').trim();
+    if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
+    try {
+      await deleteDoc(doc(this.firestore, 'projects', project.id));
+      this.projects = this.projects.filter((p) => p.id !== project.id);
+      this.notify('ok', `Deleted ${name}.`);
+    } catch (err: any) {
+      this.notify('error', `Couldn't delete: ${err.message}`);
+    }
+  }
+
+  addSection(): void {
+    this.form.sections.push(emptySection());
+  }
+
+  removeSection(index: number): void {
+    const section = this.form.sections[index];
+    const hasContent =
+      section.heading ||
+      section.body ||
+      section.figure.src ||
+      section.phones.length;
+    if (hasContent && !confirm('Remove this section?')) return;
+    this.form.sections.splice(index, 1);
+  }
+
+  moveSection(index: number, by: number): void {
+    const target = index + by;
+    if (target < 0 || target >= this.form.sections.length) return;
+    const [section] = this.form.sections.splice(index, 1);
+    this.form.sections.splice(target, 0, section);
+  }
+
+  addPhone(sectionIndex: number): void {
+    const phones = this.form.sections[sectionIndex].phones;
+    if (phones.length < MAX_PHONES) phones.push(emptyFigure());
+  }
+
+  removePhone(sectionIndex: number, phoneIndex: number): void {
+    this.form.sections[sectionIndex].phones.splice(phoneIndex, 1);
+  }
+
+  addScreenshot(): void {
+    this.form.screenshots.push('');
+  }
+
+  setScreenshot(index: number, src: string): void {
+    if (src) this.form.screenshots[index] = src;
+    else this.form.screenshots.splice(index, 1);
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  onBusy(busy: boolean): void {
+    this.uploads = Math.max(0, this.uploads + (busy ? 1 : -1));
+  }
+
+  thumb(project: AdminProject): string {
+    return projectImage(project.data.img || '', 240);
+  }
+
+  slug(project: AdminProject): string {
+    return slugify(String(project.data.projectName || '')) || project.id;
+  }
+
+  summary(project: AdminProject): string {
+    return project.data.tagline || project.data.projectDesc || '';
+  }
+
+  hasWriteUp(project: AdminProject): boolean {
+    return !!(project.data.intro || project.data.sections?.length);
+  }
+
+  get activeCount(): number {
+    return this.projects.filter((p) => p.data.isActive !== false).length;
+  }
+
+  private notify(kind: 'ok' | 'error', text: string): void {
+    this.notice = { kind, text };
+    clearTimeout(this.noticeTimer);
+    this.noticeTimer = setTimeout(() => (this.notice = null), 5000);
   }
 }

@@ -1,0 +1,12 @@
+.login {
+  @apply grid place-items-center px-5 py-16;
+}
+
+.login-card {
+  @apply w-full max-w-sm;
+}
+
+.login-title {
+  @apply text-xl font-semibold;
+  color: var(--primary);
+}

@@ -1,181 +1,171 @@
-<div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-  <!-- Form -->
-  <form class="bg-[#1f2937] rounded-lg p-6" (ngSubmit)="save()" novalidate>
-    <div class="flex items-center justify-between mb-6 gap-4">
-      <h2 class="text-2xl font-semibold text-white">
-        {{ editing ? 'Edit Certificate' : 'Add Certificate' }}
+<div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+  <form class="a-panel" (ngSubmit)="save()" novalidate>
+    <div class="mb-6 flex items-center justify-between gap-4">
+      <h2 class="a-panel-title !mb-0">
+        {{ editing ? 'Edit certificate' : 'Add a certificate' }}
       </h2>
-      <button
-        *ngIf="editing"
-        type="button"
-        (click)="resetForm()"
-        class="text-sm text-gray-400 hover:text-white"
-      >
-        Cancel edit
+      <button *ngIf="editing" type="button" class="a-btn" (click)="resetForm()">
+        Cancel
       </button>
     </div>
 
-    <div class="mb-6">
-      <label class="label" for="certFile">Certificate image or PDF</label>
-      <input
-        id="certFile"
-        type="file"
-        accept="image/*,application/pdf"
-        (change)="onFileSelected($event)"
-        class="block w-full text-sm border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-gray-700 border-gray-600"
-      />
-      <p class="hint">
+    <div class="mb-5">
+      <span class="a-label">Certificate image or PDF</span>
+      <label class="a-btn">
+        <input
+          id="certFile"
+          type="file"
+          accept="image/*,application/pdf"
+          class="sr-only"
+          (change)="onFileSelected($event)"
+        />
+        <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i>
+        {{ form.fileUrl ? 'Replace file' : 'Upload file' }}
+      </label>
+      <p class="a-hint">
         PDFs are fine, the first page is shown as the preview.
-        <span *ngIf="editing">Leave empty to keep the current file.</span>
+        <span *ngIf="editing">Leave it to keep the current file.</span>
       </p>
-      <div *ngIf="uploading || uploadProgress" class="w-full my-2 rounded-full bg-gray-700">
-        <div
-          class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full transition-all"
-          [style.width.%]="uploadProgress"
-        >
-          {{ uploadProgress }}%
-        </div>
+      <div *ngIf="uploading || uploadProgress" class="a-progress mt-3">
+        <span [style.width.%]="uploadProgress"></span>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-      <div class="mb-6">
-        <label class="label" for="certTitle">Title</label>
+    <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2">
+      <div class="mb-5">
+        <label class="a-label" for="certTitle">Title</label>
         <input
           id="certTitle"
           name="title"
-          class="field"
+          class="a-input"
           placeholder="Introduction to Modern AI"
           [ngModel]="form.title"
           (ngModelChange)="onTitleChange($event)"
           required
         />
       </div>
-      <div class="mb-6">
-        <label class="label" for="certIssuer">Issued by (platform)</label>
+      <div class="mb-5">
+        <label class="a-label" for="certIssuer">Issued by</label>
         <input
           id="certIssuer"
           name="issuer"
-          class="field"
+          class="a-input"
           placeholder="Coursera, Cisco Networking Academy..."
           [(ngModel)]="form.issuer"
           required
         />
       </div>
-      <div class="mb-6">
-        <label class="label" for="certDate">Issued on</label>
+      <div class="mb-5">
+        <label class="a-label" for="certDate">Issued on</label>
         <input
           id="certDate"
           name="issuedOn"
-          class="field"
+          class="a-input"
           placeholder="YYYY-MM or YYYY"
           [(ngModel)]="form.issuedOn"
         />
       </div>
-      <div class="mb-6">
-        <label class="label" for="certCredentialId">Credential ID (optional)</label>
+      <div class="mb-5">
+        <label class="a-label" for="certCredentialId">Credential ID</label>
         <input
           id="certCredentialId"
           name="credentialId"
-          class="field"
-          placeholder="G5WLBEVHA3PX"
+          class="a-input"
+          placeholder="Optional"
           [(ngModel)]="form.credentialId"
         />
       </div>
     </div>
 
-    <div class="mb-6">
-      <label class="label" for="certUrl">Verification link on the platform</label>
+    <div class="mb-5">
+      <label class="a-label" for="certUrl">Verification link</label>
       <input
         id="certUrl"
         name="credentialUrl"
         type="url"
-        class="field"
+        class="a-input"
         placeholder="https://coursera.org/verify/..."
         [(ngModel)]="form.credentialUrl"
       />
     </div>
 
-    <div class="mb-6">
-      <label class="label" for="certDesc">Short description (optional)</label>
+    <div class="mb-5">
+      <label class="a-label" for="certDesc">Short description</label>
       <textarea
         id="certDesc"
         name="description"
         rows="3"
-        class="field"
-        placeholder="What the course covered, in a sentence or two"
+        class="a-input"
+        placeholder="What it covered, in a sentence or two"
         [(ngModel)]="form.description"
       ></textarea>
     </div>
 
-    <div class="mb-6">
-      <label class="label" for="certSkills">Skills (comma separated)</label>
+    <div class="mb-5">
+      <label class="a-label" for="certSkills">Skills</label>
       <input
         id="certSkills"
         name="skills"
-        class="field"
+        class="a-input"
         placeholder="Machine Learning, Prompt Design"
         [(ngModel)]="form.skills"
       />
+      <p class="a-hint">Separate with commas.</p>
     </div>
 
-    <div class="mb-6">
-      <label class="label" for="certSlug">Link anchor</label>
-      <div class="flex items-stretch rounded-lg overflow-hidden border border-gray-600">
+    <div class="mb-5">
+      <label class="a-label" for="certSlug">Link anchor</label>
+      <div class="slug">
         <span class="slug-prefix">/certificates#</span>
         <input
           id="certSlug"
           name="slug"
-          class="field !border-0 !rounded-none"
+          class="slug-input"
           placeholder="intro-to-modern-ai"
           [ngModel]="form.slug"
           (ngModelChange)="onSlugChange($event)"
         />
       </div>
-      <p class="hint">
-        This is the address you paste into your CV. It is filled in from the
-        title, you can shorten it.
+      <p class="a-hint">
+        The address you paste into your CV. It's filled in from the title, and
+        you can shorten it.
       </p>
       <p
         *ngIf="editing && form.slug !== editing.slug"
-        class="hint !text-amber-400"
+        class="a-hint !text-[#f8d47a]"
       >
-        Changing this breaks any link that already points to #{{ editing.slug }}.
+        Changing this breaks any link that already points to #{{
+          editing.slug
+        }}.
       </p>
     </div>
 
-    <label class="flex items-center gap-3 mb-6 text-sm text-gray-300 cursor-pointer">
-      <input
-        type="checkbox"
-        name="isActive"
-        [(ngModel)]="form.isActive"
-        class="w-4 h-4 rounded"
-      />
-      Show on the public certificates page
+    <label class="a-check mb-6">
+      <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+      Show on the certificates page
     </label>
 
-    <p *ngIf="error" class="mb-4 text-sm text-red-400" role="alert">{{ error }}</p>
+    <p *ngIf="error" class="a-error mb-4" role="alert">{{ error }}</p>
 
     <button
       type="submit"
+      class="a-btn a-btn-accent"
       [disabled]="uploading || saving"
-      class="text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5"
     >
       {{
         uploading
-          ? 'Uploading...'
+          ? 'Uploading…'
           : saving
-          ? 'Saving...'
-          : editing
-          ? 'Update Certificate'
-          : 'Add Certificate'
+            ? 'Saving…'
+            : editing
+              ? 'Save changes'
+              : 'Add certificate'
       }}
     </button>
   </form>
 
-  <!-- Preview -->
-  <aside class="bg-[#1f2937] rounded-lg p-6 h-fit">
-    <h3 class="text-lg font-semibold text-white mb-4">Preview</h3>
+  <aside class="a-panel h-fit">
+    <h3 class="a-panel-title">Preview</h3>
     <div class="preview-mat">
       <img
         *ngIf="form.fileUrl && !previewFailed; else noPreview"
@@ -184,7 +174,7 @@
         (error)="previewFailed = true"
       />
       <ng-template #noPreview>
-        <p class="text-sm text-gray-500 p-8 text-center">
+        <p class="p-8 text-center text-sm text-[#74716a]">
           <ng-container *ngIf="previewFailed; else emptyPreview">
             The preview couldn't be generated. If this is a PDF, check that
             "Allow delivery of PDF and ZIP files" is enabled in Cloudinary
@@ -194,66 +184,63 @@
         </p>
       </ng-template>
     </div>
-    <p *ngIf="form.title" class="mt-4 text-white font-semibold">{{ form.title }}</p>
-    <p *ngIf="form.issuer || form.issuedOn" class="text-sm text-gray-400">
-      {{ form.issuer }}<span *ngIf="form.issuer && form.issuedOn"> · </span>{{ formatIssuedOn(form.issuedOn) }}
+    <p *ngIf="form.title" class="preview-title">{{ form.title }}</p>
+    <p *ngIf="form.issuer || form.issuedOn" class="text-sm">
+      {{ form.issuer }}<span *ngIf="form.issuer && form.issuedOn"> · </span
+      >{{ formatIssuedOn(form.issuedOn) }}
     </p>
-    <p *ngIf="form.slug" class="mt-3 text-xs text-blue-300 break-all">
-      {{ permalink(form.slug) }}
-    </p>
+    <p *ngIf="form.slug" class="preview-link">{{ permalink(form.slug) }}</p>
   </aside>
 </div>
 
-<!-- Existing certificates -->
-<div class="bg-[#1f2937] rounded-lg p-6 mt-6">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-semibold text-white">Certificates</h2>
-    <a
-      routerLink="/certificates"
-      target="_blank"
-      class="text-sm text-blue-400 hover:text-blue-300"
-    >
-      Open public page ↗
+<div class="mt-8">
+  <div class="mb-5 flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-[#eeebdd]">Certificates</h2>
+    <a class="a-btn" routerLink="/certificates" target="_blank">
+      Open public page <span aria-hidden="true">↗</span>
     </a>
   </div>
 
-  <p *ngIf="loading" class="text-gray-400">Loading...</p>
-  <p *ngIf="!loading && !certificates.length" class="text-gray-400">
+  <p *ngIf="loading" class="py-6 text-sm">Loading…</p>
+  <p *ngIf="!loading && !certificates.length" class="py-6 text-sm">
     No certificates yet.
   </p>
 
-  <ul class="flex flex-col divide-y divide-gray-700">
+  <ul class="flex flex-col gap-2">
     <li
       *ngFor="let cert of certificates"
-      class="flex flex-col sm:flex-row sm:items-center gap-4 py-4"
-      [class.opacity-50]="!cert.isActive"
+      class="cert-row"
+      [class.is-hidden]="!cert.isActive"
     >
-      <img
-        *ngIf="cert.fileUrl"
-        [src]="thumb(cert)"
-        [alt]="cert.title"
-        class="w-28 h-20 object-cover rounded bg-white shrink-0"
-      />
-      <div class="flex-1 min-w-0">
-        <p class="text-white font-medium truncate">{{ cert.title }}</p>
-        <p class="text-sm text-gray-400">
-          {{ cert.issuer }}<span *ngIf="cert.issuedOn"> · {{ formatIssuedOn(cert.issuedOn) }}</span>
+      <span class="cert-thumb">
+        <img *ngIf="cert.fileUrl" [src]="thumb(cert)" [alt]="cert.title" />
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="cert-title">{{ cert.title }}</p>
+        <p class="text-[13px]">
+          {{ cert.issuer
+          }}<span *ngIf="cert.issuedOn">
+            · {{ formatIssuedOn(cert.issuedOn) }}</span
+          >
         </p>
         <button
           type="button"
-          (click)="copyLink(cert.slug)"
-          class="text-xs text-blue-300 hover:text-blue-200 break-all text-left"
+          class="cert-link"
           title="Copy link"
+          (click)="copyLink(cert.slug)"
         >
-          #{{ cert.slug }} <i class="fa-regular fa-copy ml-1"></i>
+          #{{ cert.slug }}
+          <i class="fa-regular fa-copy ml-1" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="flex gap-2 shrink-0">
-        <button type="button" class="row-btn" (click)="toggleActive(cert)">
+      <div class="flex shrink-0 flex-wrap gap-2">
+        <button type="button" class="a-btn" (click)="toggleActive(cert)">
           {{ cert.isActive ? 'Hide' : 'Show' }}
         </button>
-        <button type="button" class="row-btn" (click)="startEdit(cert)">Edit</button>
-        <button type="button" class="row-btn !text-red-400 hover:!bg-red-900/40" (click)="remove(cert)">
+        <button type="button" class="a-btn" (click)="startEdit(cert)">
+          Edit
+        </button>
+        <button type="button" class="a-btn a-btn-danger" (click)="remove(cert)">
           Delete
         </button>
       </div>

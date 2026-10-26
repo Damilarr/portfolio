@@ -1,59 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment.prod';
-import * as Aos from 'aos';
-import '../../../assets/smtp.js';
-declare let Email: any;
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnDestroy {
   contactInfo: any;
   submitting = false;
-  submitted = false;
-  showToast = false;
-  toastType: 'success' | 'error' = 'success';
-  toastMessage = '';
+  status: 'idle' | 'success' | 'error' = 'idle';
+  statusMessage = '';
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient) {
+  private statusTimer: any;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private http: HttpClient
+  ) {
     this.contactInfo = this.formBuilder.group({
       name: ['', [Validators.required]],
       email: ['', [Validators.email, Validators.required]],
-      message: ['', [Validators.required, Validators.min(10)]],
+      message: ['', [Validators.required]],
     });
   }
-  get name() {
-    return this.contactInfo.get('name');
-  }
-  get email() {
-    return this.contactInfo.get('email');
-  }
-  get message() {
-    return this.contactInfo.get('message');
-  }
-  ngOnInit(): void {
-    Aos.init();
 
-    const formSubmitted = localStorage.getItem('formSubmitted');
-    if (formSubmitted === 'true') {
-      // Clear the form
-      this.contactInfo.reset();
-      this.submitted = true;
-      setTimeout(() => (this.submitted = false), 5000);
-      localStorage.removeItem('formSubmitted');
-    }
+  ngOnDestroy(): void {
+    clearTimeout(this.statusTimer);
   }
 
   onSubmit() {
-    console.log('Form submitted', this.contactInfo.value);
-
     if (this.contactInfo.valid) {
       this.submitting = true;
-      this.submitted = false;
+      this.setStatus('idle', '');
 
       const recipientEmail = environment.contactEmail || 'mmmm@example.com';
 
@@ -65,7 +46,7 @@ export class ContactComponent implements OnInit {
       formData.append('_captcha', 'false');
       formData.append('_template', 'box');
 
-      const returnUrl = `${window.location.origin}${window.location.pathname}#chat`;
+      const returnUrl = `${window.location.origin}${window.location.pathname}#contact`;
       formData.append('_next', returnUrl);
 
       this.http
@@ -73,14 +54,10 @@ export class ContactComponent implements OnInit {
           headers: { Accept: 'application/json' },
         })
         .subscribe({
-          next: (response: any) => {
-            console.log('Form submitted successfully', response);
+          next: () => {
             this.submitting = false;
             this.contactInfo.reset();
-            this.showToastNotification(
-              'success',
-              'Message sent successfully! 🎉'
-            );
+            this.setStatus('success', "Thanks! I'll get back to you soon.");
           },
           error: (error) => {
             console.error('AJAX submission failed, trying fallback:', error);
@@ -90,15 +67,11 @@ export class ContactComponent implements OnInit {
 
       return false;
     } else {
-      console.log('Form is invalid');
       Object.keys(this.contactInfo.controls).forEach((key) => {
         this.contactInfo.get(key)?.markAsTouched();
       });
 
-      this.showToastNotification(
-        'error',
-        'Please fill in all required fields correctly.'
-      );
+      this.setStatus('error', 'Please fill in all fields with a valid email.');
 
       return false;
     }
@@ -125,7 +98,7 @@ export class ContactComponent implements OnInit {
     setTimeout(() => {
       this.submitting = false;
       this.contactInfo.reset();
-      this.showToastNotification('success', 'Message sent successfully! 🎉');
+      this.setStatus('success', "Thanks! I'll get back to you soon.");
       setTimeout(() => {
         if (document.body.contains(form)) {
           document.body.removeChild(form);
@@ -134,13 +107,12 @@ export class ContactComponent implements OnInit {
     }, 500);
   }
 
-  showToastNotification(type: 'success' | 'error', message: string) {
-    this.toastType = type;
-    this.toastMessage = message;
-    this.showToast = true;
-
-    setTimeout(() => {
-      this.showToast = false;
-    }, 3000);
+  private setStatus(status: 'idle' | 'success' | 'error', message: string) {
+    clearTimeout(this.statusTimer);
+    this.status = status;
+    this.statusMessage = message;
+    if (status !== 'idle') {
+      this.statusTimer = setTimeout(() => this.setStatus('idle', ''), 4000);
+    }
   }
 }

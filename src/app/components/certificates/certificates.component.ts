@@ -22,7 +22,6 @@ import { CertificateService } from 'src/app/service/certificate.service';
 export class CertificatesComponent implements OnInit, OnDestroy {
   certificates: Certificate[] = [];
   status: 'loading' | 'ready' | 'error' = 'loading';
-  /** Slug of the certificate the visitor was linked to */
   targetSlug: string | null = null;
   copiedSlug: string | null = null;
   lightbox: Certificate | null = null;
@@ -73,7 +72,6 @@ export class CertificatesComponent implements OnInit, OnDestroy {
     return n.toString().padStart(2, '0');
   }
 
-  /** "coursera.org" from a full URL, so visitors know where a link goes */
   host(url: string): string {
     try {
       return new URL(url).hostname.replace(/^www\./, '');
@@ -114,10 +112,6 @@ export class CertificatesComponent implements OnInit, OnDestroy {
     return certificate.slug;
   }
 
-  /**
-   * Data arrives after the router has already tried to resolve the fragment, so scroll ourselves.
-   * Images keep their natural size, so wait for them first or the target moves after we scroll.
-   */
   private scrollToTarget(): void {
     if (!this.targetSlug) return;
     const slug = this.targetSlug;
@@ -136,10 +130,8 @@ export class CertificatesComponent implements OnInit, OnDestroy {
                 })
           )
         );
-        // Don't keep the visitor waiting forever on a slow image.
         await Promise.race([loaded, new Promise((r) => setTimeout(r, 4000))]);
 
-        // The visitor may have navigated to another anchor while we waited.
         if (this.targetSlug !== slug) return;
         const el = document.getElementById(slug);
         if (!el) return;
